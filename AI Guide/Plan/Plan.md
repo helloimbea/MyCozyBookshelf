@@ -1,0 +1,132 @@
+# My Cozy Bookshelf — Plano do Projeto
+
+> Este documento é a fonte de verdade do projeto. Antes de implementar qualquer coisa,
+> a IA deve ler este plano e seguir as decisões aqui descritas. Em caso de dúvida
+> que não esteja respondida aqui, pergunte antes de inventar.
+
+## 1. Contexto
+
+- O projeto nasceu como **"ajuda.me"**: uma lojinha de livros de autoajuda feita em HTML e JavaScript puro.
+- Agora ele está sendo reescrito como um projeto **fullstack**: **Java Spring Boot** (backend) + **React** (frontend).
+- **A ideia central mudou: NÃO É MAIS UMA LOJA DE LIVROS.**
+- O nome agora é **"My Cozy Bookshelf"** (não usar mais "ajuda.me" em lugar nenhum).
+
+## 2. A nova proposta
+
+O My Cozy Bookshelf é uma **estante privada**: cada usuário cadastra os livros que leu
+e escreve as **reflexões** que teve com cada um deles.
+
+- É pessoal e privado: cada usuário vê apenas os próprios livros e reflexões.
+- A visualização dos livros **simula uma prateleira real**, como se os livros estivessem de fato numa estante.
+- O tom é acolhedor, calmo e íntimo, como um cantinho de leitura.
+
+### O que NÃO existe mais (não implementar)
+
+- Carrinho de compras, preços, checkout, pagamento
+- Promoções, descontos, selos de "% OFF", banners de lançamento
+- Catálogo de venda / vitrine de loja
+
+## 3. Identidade visual
+
+### Mascote
+- O **camaleão** continua sendo a identidade visual principal (logo no header e ilustração grande nas telas de login/cadastro).
+- Arquivo: `AI Guide/Assets/camaleao.png`
+
+### Paleta de cores
+Manter a paleta original. **Só é permitido mudar a cor de fundo e detalhes específicos.**
+O azul menta, o verde e o marrom são obrigatórios.
+
+| Papel                          | Cor (aprox., tirada das referências) |
+|--------------------------------|--------------------------------------|
+| Azul menta (header)            | `#8BF5D7`                            |
+| Azul (fundo login/cadastro)    | `#6ADCE4`                            |
+| Verde (botões / inputs)        | `#91EBC8`, `#A0D6B2`                 |
+| Verde-menta claro (cards)      | `#D3F4ED`, `#C0FFF1`                 |
+| Marrom (moldura dos cards)     | `#B4A588`                            |
+| Marrom (texto / títulos)       | `#756456`                            |
+| Texto do header (verde escuro) | `#56756C`                            |
+| Bege (fundo da home, borda do header) | `#E9E1D4`, `#D9D5A3`          |
+
+> Os valores acima são uma base; ajustes finos de tom são permitidos, desde que a paleta continue reconhecível.
+
+### Plantas
+- Manter algumas plantas decorativas (vasos pendurados e vasinhos), como no projeto original.
+- Arquivos: `AI Guide/Assets/plantar.png` (vaso pendurado) e `AI Guide/Assets/plantar2.png` (vasinho).
+
+### Tipografia
+- Fonte **Quicksand** (Google Fonts) — ver `AI Guide/Assets/font.css`.
+- Textos em minúsculas e com tom carinhoso, como no original ("oi amigo, que bom ter você de volta!").
+
+### Estilo
+- **Tudo arredondado e fofo** (cantos bem arredondados em cards, botões, inputs, livros).
+- **Simples e minimalista**, sem excessos, sem elementos sobrando.
+- **Flat**: evitar gradientes pesados, sombras fortes e efeitos chamativos (sombras suaves são ok).
+
+## 4. Telas
+
+As referências visuais do projeto original estão em `AI Guide/References/`
+(`home.png`, `login.png`, `signin.png`).
+
+### Header (todas as telas)
+- **Manter igual ao original**: fundo azul menta, camaleão + nome à esquerda, links à direita, borda inferior bege.
+- Trocar o nome para "My Cozy Bookshelf".
+- **Remover o botão de carrinho de compras.**
+- **Adicionar mais botões** de navegação. Sugestão: `início`, `minha estante`, `adicionar livro`, `login` (ou `sair`, quando logado).
+
+### Tela inicial (home)
+- **Não mostra mais promoções** nem carrossel de livros à venda.
+- É **personalizável**: o usuário fixa no início uma reflexão, podendo:
+  - escolher uma das suas reflexões já escritas como favorita, **ou**
+  - escrever uma reflexão nova só para fixar ali.
+- Manter o clima do original: fundo claro, plantas decorativas, card central arredondado.
+
+### Login
+- **Quase igual ao original** (`login.png`): camaleão grande à esquerda, card com moldura marrom à direita.
+- Apenas ajustes necessários para melhorar a qualidade visual (alinhamento, espaçamentos, link "criar conta" estilizado na paleta em vez do azul padrão do navegador, etc.).
+
+### Cadastro (criar conta)
+- **Quase igual ao original** (`signin.png`): mesmos campos (nome, email, senha com mínimo de 8 dígitos, confirmar senha).
+- Mesma regra: só ajustes para melhorar a qualidade visual.
+
+### Adicionar livro
+- Formulário para cadastrar um livro que o usuário leu (ex.: título, autor, capa e a reflexão sobre o livro).
+
+### Biblioteca / minha estante
+- Mostra todos os livros cadastrados pelo usuário **como se estivessem numa prateleira real** (livros lado a lado em prateleiras de madeira, no estilo fofo/flat do site).
+- Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro.
+
+## 5. MVP
+
+Escopo do MVP (por enquanto é só isso):
+
+1. Cadastro e login de usuário
+2. Header novo (sem carrinho, com mais botões)
+3. Adicionar livro (com reflexão)
+4. Biblioteca com visual de prateleira
+5. Tela inicial personalizada com a reflexão fixada
+
+Tudo que estiver fora dessa lista fica para depois — não implementar sem pedido explícito.
+
+## 6. Stack técnica
+
+| Pasta       | Stack                                                              |
+|-------------|--------------------------------------------------------------------|
+| `backend/`  | Java 21, Spring Boot 4.1, Spring Data JPA, MySQL, Flyway, Actuator |
+| `frontend/` | React + Vite + TypeScript                                          |
+
+- O schema do banco é versionado pelo Flyway (`backend/src/main/resources/db/migration`); o Hibernate fica em `validate`.
+- O Vite encaminha `/api/*` para o backend em `localhost:8080`.
+
+### Modelo de dados (rascunho)
+- **Usuário**: nome, email, senha (hash).
+- **Livro**: pertence a um usuário; título, autor, capa (URL ou upload), data de cadastro.
+- **Reflexão**: pertence a um livro; texto, data.
+- **Reflexão fixada na home**: referência a uma reflexão existente **ou** um texto livre escrito só para o início.
+
+## 7. Regras para a IA
+
+- Sempre seguir este plano; se um pedido contrariar o plano, avisar antes de fazer.
+- Nunca reintroduzir elementos de loja (carrinho, preço, promoção).
+- Nunca usar o nome "ajuda.me".
+- Respeitar a paleta, o camaleão, as plantas e o estilo arredondado, fofo, minimalista e flat.
+- Textos da interface em português, em minúsculas e com tom acolhedor.
