@@ -287,6 +287,23 @@ textarea {
   border-radius: var(--radius-sm);
 }
 
+/* botão com cara de link (ex.: "ver demonstração") */
+.link-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--green);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.link-button:hover {
+  text-decoration-color: var(--green-dark);
+}
+
 /* ---------- formulários ---------- */
 
 .field {

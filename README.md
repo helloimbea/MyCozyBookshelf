@@ -9,6 +9,14 @@
   e tudo o que eles deixaram em você. 🌿
 </p>
 
+<p align="center">
+  🔗 <strong>veja ao vivo:</strong> <em>em breve</em> · clique em <strong>ver demonstração</strong> pra entrar numa estante já cheia de livros
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/estante.png" alt="estante com os livros da demonstração" width="820" />
+</p>
+
 ---
 
 ## oi, que bom te ver por aqui!
@@ -29,8 +37,19 @@ Ninguém vende nada nem fica de olho no que você lê. A estante é só sua.
 - **procurar na estante** pelo título e filtrar por gênero ou por tags
 - **escrever reflexões** em cada livro, quantas quiser
 - **fixar uma reflexão no início**: a tela inicial mostra a reflexão que você escolheu, ou uma que você escreveu só pra ela
+- **ler de noite**: tem tema claro e escuro, no botão de sol/lua do topo
 
 Livro sem capa não fica feio: o site faz uma capinha fofa com as cores da estante e o título escrito nela.
+
+E pra quem só quer dar uma olhadinha, tem o **modo demonstração**: um clique em *ver demonstração* (no início ou no login) abre uma estante com 20 livros, reflexões e uma reflexão fixada no início. Dá pra mexer à vontade, ela é recriada do zero a cada vez.
+
+| início                                   | página do livro                        |
+|------------------------------------------|----------------------------------------|
+| ![início](docs/screenshots/inicio.png)   | ![livro](docs/screenshots/livro.png)   |
+
+| tema escuro                                          | no celular                                                   |
+|------------------------------------------------------|--------------------------------------------------------------|
+| ![tema escuro](docs/screenshots/estante-escuro.png)  | <img src="docs/screenshots/celular.png" alt="celular" width="240" /> |
 
 ## o jeitinho dele
 
@@ -110,6 +129,19 @@ Em desenvolvimento, o Vite encaminha tudo que começa com `/api` para `http://lo
 O schema é versionado pelo **Flyway** em `backend/src/main/resources/db/migration` (`V1__init.sql`, `V2__...`).
 O Hibernate fica em modo `validate`: ele confere as tabelas, mas nunca altera nada.
 
+## pra publicar 🚀
+
+Enquanto os dados ficam no navegador, o frontend funciona sozinho e pode ser publicado de graça como site estático. O jeito mais simples é a **Vercel**:
+
+1. entrar em [vercel.com](https://vercel.com) com a conta do GitHub e importar este repositório
+2. em **Root Directory**, escolher `frontend` (o resto a Vercel descobre sozinha: build `npm run build`, saída `dist`)
+3. publicar, e depois colocar o link lá no topo deste README 🎉
+
+O arquivo [`frontend/vercel.json`](frontend/vercel.json) faz páginas como `/estante` e `/livro/...` abrirem direitinho mesmo quando alguém atualiza a página ou abre o link direto.
+Cada push na branch configurada atualiza o site sozinho.
+
+Quando o backend estiver pronto, o Spring Boot e o MySQL vão para outro serviço (Render, Railway ou Fly.io, por exemplo), e o frontend continua na Vercel.
+
 ## onde fica cada coisa
 
 ```
@@ -118,12 +150,14 @@ my-cozy-bookshelf/
 │   ├── Plan/Plan.md        # o plano do projeto (leia antes de mudar algo!)
 │   ├── Assets/             # camaleão, plantinhas e fonte
 │   └── References/         # telas do ajuda.me original
+├── docs/screenshots/       # imagens usadas neste README
 ├── backend/                # Java 21 + Spring Boot 4.1 + MySQL + Flyway
 └── frontend/               # React + Vite + TypeScript
     └── src/
         ├── pages/          # as telas (início, estante, livro, login...)
         ├── components/     # header, rodapé, capa, estrelas, formulário...
         ├── services/api.ts # conversa com os dados (hoje no navegador)
+        └── services/demoData.ts # os livros do modo demonstração (capas em frontend/public/demo)
         └── auth/           # login e páginas protegidas
 ```
 

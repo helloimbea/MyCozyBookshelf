@@ -243,3 +243,8 @@
     font-size: 1.3rem;
   }
 }
+
+.home-card__demo {
+  margin-top: 6px;
+  font-size: 0.95rem;
+}

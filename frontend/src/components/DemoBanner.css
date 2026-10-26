@@ -1,0 +1,26 @@
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  padding: 10px 16px;
+  background: var(--mint-light);
+  color: var(--green-dark);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.demo-banner__cta {
+  border: 0;
+  background: var(--green);
+  color: var(--on-accent);
+  border-radius: var(--radius-pill);
+  padding: 4px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.demo-banner__cta:hover {
+  background: var(--green-hover);
+}
