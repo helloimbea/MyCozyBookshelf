@@ -1,0 +1,91 @@
+﻿.book-form {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.book-form__cover {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  text-align: center;
+}
+
+.book-form__file input {
+  display: none;
+}
+
+.book-form__hint {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.book-form__fields {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.book-form__toggle {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: var(--green-dark);
+  font-weight: 600;
+}
+
+.book-form__toggle span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--green);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.book-form__more {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.book-form__wide {
+  grid-column: 1 / -1;
+}
+
+.book-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+@media (max-width: 720px) {
+  .book-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .book-form__cover {
+    max-width: 200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .book-form__more {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* no celular os botões ocupam a largura toda, com o principal em cima */
+  .book-form__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

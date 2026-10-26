@@ -111,6 +111,7 @@ banco a capa fica vazia. Assim que o usuário adicionar uma capa, ela substitui 
 
 ### Biblioteca / minha estante
 - Mostra todos os livros cadastrados pelo usuário **como se estivessem numa prateleira real** (livros lado a lado em prateleiras de madeira, no estilo fofo/flat do site).
+- O usuário pode **procurar livros pelo título** e **filtrar por gênero ou por tags** (sem diferenciar maiúsculas nem acentos). Só os livros encontrados ficam na prateleira.
 - Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro e completar ou editar os campos opcionais (autor, resumo, páginas, gênero, tags, estrelas).
 
 ## 5. MVP
@@ -120,7 +121,7 @@ Escopo do MVP (por enquanto é só isso):
 1. Cadastro e login de usuário
 2. Header novo (sem carrinho, com mais botões)
 3. Adicionar livro (só o título é obrigatório; demais campos opcionais)
-4. Biblioteca com visual de prateleira
+4. Biblioteca com visual de prateleira (com busca por título e filtros de gênero e tags)
 5. Tela inicial personalizada com a reflexão fixada
 
 Tudo que estiver fora dessa lista fica para depois — não implementar sem pedido explícito.
