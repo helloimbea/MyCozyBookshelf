@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react'
 import './App.css'
 
@@ -32,3 +33,15 @@ function App() {
 }
 
 export default App
+=======
+
+import './App.css'
+
+function App() {
+  return (
+    <h1>My Cozy Bookshelf 📚</h1>
+  );
+}
+
+export default App;
+>>>>>>> bf49dee96ea0d0c0af491d59dcf644e6bf6504e5
