@@ -48,6 +48,7 @@
   height: 26px;
   border-radius: 50%;
   background: var(--green);
+  color: var(--on-accent);
   font-size: 1.1rem;
   line-height: 1;
 }

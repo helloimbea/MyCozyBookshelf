@@ -53,12 +53,41 @@
 }
 
 .header__link:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--header-hover);
 }
 
 .header__link.active {
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--header-active);
   font-weight: 700;
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* botão de tema claro/escuro */
+.header__theme {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--header-hover);
+  color: var(--green-dark);
+  transition: background 0.15s;
+}
+
+.header__theme:hover {
+  background: var(--header-active);
+}
+
+.header__theme svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* botão de 3 risquinhos, fundo escuro e "x" só existem no celular */
@@ -74,8 +103,12 @@
     flex-wrap: nowrap;
   }
   .header__brand {
-    font-size: 1.2rem;
-    gap: 10px;
+    font-size: 1.1rem;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  .header__actions {
+    gap: 8px;
   }
   .header__logo {
     width: 48px;
@@ -92,7 +125,7 @@
     padding: 0 11px;
     border: 0;
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--header-hover);
     flex: none;
   }
   .header__burger span {
@@ -152,7 +185,7 @@
     height: 42px;
     border: 0;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.45);
+    background: var(--header-hover);
     color: var(--green-dark);
     font-size: 1.8rem;
     line-height: 1;
