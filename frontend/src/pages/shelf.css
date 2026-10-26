@@ -1,0 +1,135 @@
+﻿.shelf-page {
+  max-width: 1080px;
+}
+
+.shelf-empty {
+  align-self: center;
+  width: 100%;
+  text-align: center;
+  font-size: 1.05rem;
+  opacity: 0.85;
+}
+
+/* altura mínima = espaço do vasinho, que fica à esquerda apoiado na estante */
+.shelf-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-height: 132px;
+  margin-bottom: 24px;
+}
+
+.shelf-top .filters {
+  width: min(460px, 100%);
+  align-items: flex-end;
+}
+
+.shelf-top .filters__search {
+  width: 100%;
+}
+
+.shelf-top .filters__group {
+  justify-content: flex-end;
+}
+
+.bookcase {
+  position: relative;
+  background: var(--beige-light);
+  border: 16px solid var(--brown);
+  border-radius: 36px;
+  padding: 28px 28px 4px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* vasinho em cima da estante */
+.bookcase__plant {
+  width: 110px;
+  left: 48px;
+  bottom: calc(100% + 10px);
+}
+
+.bookcase__shelf {
+  display: flex;
+  flex-direction: column;
+}
+
+.bookcase__books {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gap);
+  min-height: calc(var(--book-w) * 1.5 + 16px);
+  padding-top: 16px;
+}
+
+.bookcase__plank {
+  height: 18px;
+  margin: 0 -28px 28px;
+  background: var(--brown);
+  border-radius: 0 0 10px 10px;
+  box-shadow: inset 0 -6px 0 var(--brown-dark);
+}
+
+.bookcase__shelf:last-child .bookcase__plank {
+  margin-bottom: 0;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.shelf-book {
+  width: var(--book-w);
+  text-decoration: none;
+  flex: none;
+  display: block;
+  border-radius: 8px 16px 16px 8px;
+  transition: transform 0.2s ease;
+}
+
+.shelf-book:hover,
+.shelf-book:focus-visible {
+  transform: translateY(-10px);
+}
+
+.shelf-book.is-new {
+  animation: book-in 0.6s ease-out both;
+}
+
+@keyframes book-in {
+  from {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  /* no celular a busca ocupa a largura toda e o vasinho ganha espaço próprio */
+  .shelf-top {
+    min-height: 0;
+    margin-bottom: 100px;
+  }
+  .shelf-top .filters {
+    width: 100%;
+    align-items: flex-start;
+  }
+  .shelf-top .filters__group {
+    justify-content: flex-start;
+  }
+  .bookcase {
+    border-width: 10px;
+    border-radius: 26px;
+    padding: 16px 16px 4px;
+  }
+  .bookcase__plank {
+    margin: 0 -16px 20px;
+  }
+  .bookcase__plant {
+    width: 80px;
+    left: 24px;
+  }
+}

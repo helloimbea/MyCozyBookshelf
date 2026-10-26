@@ -1,47 +1,30 @@
-<<<<<<< HEAD
-import { useEffect, useState } from 'react'
-import './App.css'
+﻿import { Navigate, Route, Routes } from 'react-router'
+import { RequireAuth } from './auth/RequireAuth'
+import { Footer } from './components/Footer'
+import { Header } from './components/Header'
+import { AddBook } from './pages/AddBook'
+import { BookDetail } from './pages/BookDetail'
+import { Home } from './pages/Home'
+import { Login } from './pages/Login'
+import { Shelf } from './pages/Shelf'
+import { Signup } from './pages/Signup'
 
-type Hello = { message: string; timestamp: string }
-
-function App() {
-  const [data, setData] = useState<Hello | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<Hello>
-      })
-      .then(setData)
-      .catch((err: Error) => setError(err.message))
-  }, [])
-
+export default function App() {
   return (
-    <main style={{ padding: '2rem', fontFamily: 'system-ui, sans-serif' }}>
-      <h1>Projeto — Spring Boot + React</h1>
-      {error && <p style={{ color: 'crimson' }}>Erro ao chamar o backend: {error}</p>}
-      {!error && !data && <p>Carregando…</p>}
-      {data && (
-        <p>
-          {data.message} <small>({data.timestamp})</small>
-        </p>
-      )}
-    </main>
+    <>
+      <Header />
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cadastro" element={<Signup />} />
+          <Route path="/estante" element={<RequireAuth><Shelf /></RequireAuth>} />
+          <Route path="/adicionar" element={<RequireAuth><AddBook /></RequireAuth>} />
+          <Route path="/livro/:id" element={<RequireAuth><BookDetail /></RequireAuth>} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </>
   )
 }
-
-export default App
-=======
-
-import './App.css'
-
-function App() {
-  return (
-    <h1>My Cozy Bookshelf 📚</h1>
-  );
-}
-
-export default App;
->>>>>>> bf49dee96ea0d0c0af491d59dcf644e6bf6504e5

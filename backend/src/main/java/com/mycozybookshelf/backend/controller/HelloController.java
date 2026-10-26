@@ -1,4 +1,4 @@
-package com.projeto.backend.controller;
+package com.mycozybookshelf.backend.controller;
 
 import java.time.Instant;
 import java.util.Map;

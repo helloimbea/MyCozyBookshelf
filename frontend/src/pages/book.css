@@ -1,0 +1,145 @@
+﻿.back-link {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-weight: 600;
+  color: var(--green-dark);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.book-info {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.book-info__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.book-info__body h1 {
+  font-size: 2rem;
+}
+
+.book-info__author {
+  font-size: 1.15rem;
+  margin-top: -8px;
+}
+
+.book-info__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.book-info__summary {
+  white-space: pre-line;
+  line-height: 1.65;
+}
+
+.book-info__missing {
+  font-style: italic;
+  opacity: 0.75;
+}
+
+.book-info__date {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.book-info__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.reflections {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reflections h2 {
+  font-size: 1.5rem;
+}
+
+.reflection-new {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.reflection-new .input {
+  background: var(--white);
+}
+
+.reflection-new .input:focus {
+  background: var(--white);
+}
+
+.reflections__empty {
+  opacity: 0.75;
+}
+
+.reflection {
+  background: var(--mint-light);
+  border-radius: var(--radius);
+  padding: 20px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reflection header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--green-dark);
+}
+
+.reflection header .chip {
+  background: var(--white);
+}
+
+.reflection p {
+  white-space: pre-line;
+  line-height: 1.65;
+  font-size: 1.05rem;
+}
+
+.reflection footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.book-missing {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .book-info {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .book-info__cover {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}
