@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react'
+﻿import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/context'
+import { DemoButton } from '../components/DemoButton'
 import { AuthLayout } from './AuthLayout'
 
 export function Login() {
@@ -43,6 +44,9 @@ export function Login() {
       </form>
       <p className="auth-card__switch">
         não tem uma conta? <Link to="/cadastro" state={{ from }}>criar conta</Link>
+      </p>
+      <p className="auth-card__switch">
+        só quer dar uma olhadinha? <DemoButton className="link-button" />
       </p>
     </AuthLayout>
   )

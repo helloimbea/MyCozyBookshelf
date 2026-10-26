@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react'
+﻿import { useMemo, useState, type ReactNode } from 'react'
 import * as api from '../services/api'
 import type { User } from '../types'
 import { AuthContext, type AuthValue } from './context'
@@ -11,6 +11,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       login: async (email, password) => setUser(await api.login(email, password)),
       register: async (name, email, password) => setUser(await api.register(name, email, password)),
+      startDemo: async () => setUser(await api.startDemo()),
       logout: async () => {
         await api.logout()
         setUser(null)

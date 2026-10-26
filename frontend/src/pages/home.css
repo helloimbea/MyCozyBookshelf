@@ -105,7 +105,7 @@
 }
 
 .pinned__book:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--soft-hover);
 }
 
 .pinned__book > span {
@@ -164,6 +164,7 @@
 
 .pin-editor__tabs button[aria-selected='true'] {
   background: var(--green);
+  color: var(--on-accent);
   box-shadow: none;
 }
 
@@ -241,4 +242,9 @@
   .pinned__text {
     font-size: 1.3rem;
   }
+}
+
+.home-card__demo {
+  margin-top: 6px;
+  font-size: 0.95rem;
 }

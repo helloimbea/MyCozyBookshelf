@@ -1,7 +1,8 @@
-// API simulada no navegador (localStorage) enquanto o backend Spring Boot não tem os endpoints.
+﻿// API simulada no navegador (localStorage) enquanto o backend Spring Boot não tem os endpoints.
 // As funções já são assíncronas e no formato que a API real vai ter: quando o backend existir,
 // basta trocar o corpo delas por chamadas fetch('/api/...') sem mexer nas telas.
 import type { Book, BookInput, PinnedReflection, PinnedView, Reflection, User } from '../types'
+import { DEMO_BOOKS } from './demoData'
 
 // Senha em texto puro só existe neste mock; o backend vai guardar apenas o hash.
 type StoredUser = User & { password: string }
@@ -37,8 +38,8 @@ function newId() {
   return crypto.randomUUID()
 }
 
-function toUser({ id, name, email }: StoredUser): User {
-  return { id, name, email }
+function toUser({ id, name, email, demo }: StoredUser): User {
+  return demo ? { id, name, email, demo } : { id, name, email }
 }
 
 function requireUserId(): string {
@@ -94,6 +95,50 @@ export async function login(email: string, password: string): Promise<User> {
   const user = load().users.find((u) => u.email === normalized && u.password === password)
   if (!user) throw new Error('email ou senha não conferem.')
   localStorage.setItem(SESSION_KEY, user.id)
+  return toUser(user)
+}
+
+const DEMO_EMAIL = 'demo@mycozybookshelf.app'
+const DAY = 24 * 60 * 60 * 1000
+
+/** Entra na estante de demonstração, recriada do zero a cada vez com os livros de exemplo. */
+export async function startDemo(): Promise<User> {
+  const db = load()
+  let user = db.users.find((u) => u.email === DEMO_EMAIL)
+  if (!user) {
+    // sem senha: não dá pra entrar nela pelo formulário de login, só pelo botão
+    user = { id: newId(), name: 'visitante', email: DEMO_EMAIL, password: '', demo: true }
+    db.users.push(user)
+  }
+  const userId = user.id
+  db.books = db.books.filter((b) => b.userId !== userId)
+  delete db.pinned[userId]
+
+  // datas espalhadas pelo último ano, como uma estante de verdade
+  const start = Date.now() - DEMO_BOOKS.length * 12 * DAY
+  DEMO_BOOKS.forEach((demo, i) => {
+    const addedAt = start + i * 12 * DAY
+    const book: Book = {
+      id: newId(),
+      userId,
+      title: demo.title,
+      author: demo.author,
+      coverUrl: demo.cover ? `/demo/${demo.cover}` : undefined,
+      genre: demo.genre,
+      tags: demo.tags,
+      stars: demo.stars,
+      summary: demo.summary,
+      reflections: demo.reflections.map((text, j) => ({ id: newId(), text, createdAt: new Date(addedAt + (j + 1) * 2 * DAY).toISOString() })),
+      createdAt: new Date(addedAt).toISOString(),
+    }
+    db.books.push(book)
+    if (demo.pinned && book.reflections[0]) {
+      db.pinned[userId] = { kind: 'reflection', bookId: book.id, reflectionId: book.reflections[0].id }
+    }
+  })
+
+  save(db)
+  localStorage.setItem(SESSION_KEY, userId)
   return toUser(user)
 }
 

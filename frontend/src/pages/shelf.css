@@ -24,12 +24,16 @@
   align-items: flex-end;
 }
 
-.shelf-top .filters__search {
-  width: 100%;
-}
-
 .shelf-top .filters__group {
   justify-content: flex-end;
+}
+
+.shelf-top .filters__panel {
+  align-self: stretch;
+}
+
+.shelf-top .filters__panel .filters__group {
+  justify-content: flex-start;
 }
 
 .bookcase {

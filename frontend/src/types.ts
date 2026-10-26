@@ -1,7 +1,9 @@
-export type User = {
+﻿export type User = {
   id: string
   name: string
   email: string
+  /** conta da estante de demonstração */
+  demo?: boolean
 }
 
 export type Reflection = {

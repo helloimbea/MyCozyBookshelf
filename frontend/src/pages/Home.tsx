@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+﻿import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import camaleao from '../assets/camaleao.png'
 import plantar from '../assets/plantar.png'
 import plantar2 from '../assets/plantar2.png'
 import { useAuth } from '../auth/context'
 import { BookCover } from '../components/BookCover'
+import { DemoButton } from '../components/DemoButton'
 import * as api from '../services/api'
 import type { Book, PinnedReflection, PinnedView } from '../types'
 import './home.css'
@@ -45,6 +46,9 @@ function Welcome() {
           já tenho conta
         </Link>
       </div>
+      <p className="home-card__demo">
+        só quer dar uma olhadinha? <DemoButton className="link-button" />
+      </p>
     </div>
   )
 }

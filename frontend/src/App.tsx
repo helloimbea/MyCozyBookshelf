@@ -1,5 +1,6 @@
 ﻿import { Navigate, Route, Routes } from 'react-router'
 import { RequireAuth } from './auth/RequireAuth'
+import { DemoBanner } from './components/DemoBanner'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
 import { AddBook } from './pages/AddBook'
@@ -13,6 +14,7 @@ export default function App() {
   return (
     <>
       <Header />
+      <DemoBanner />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -10,3 +10,21 @@ frontend/dist/
 *.iml
 .DS_Store
 .env
+
+# Capas originais (pesadas) do modo demonstração; o site usa as versões
+# reduzidas em frontend/public/demo/
+AI Guide/Assets/amigos.png
+AI Guide/Assets/atomicos.png
+AI Guide/Assets/copo.png
+AI Guide/Assets/coragem.jpg
+AI Guide/Assets/criança-interior.png
+AI Guide/Assets/desacelera.png
+AI Guide/Assets/essencialismo.png
+AI Guide/Assets/gato-viajante.png
+AI Guide/Assets/habito.png
+AI Guide/Assets/homem-mais-rico.png
+AI Guide/Assets/inteligencia-social.png
+AI Guide/Assets/minimo.png
+AI Guide/Assets/palhaço.png
+AI Guide/Assets/queijo.png
+AI Guide/Assets/sociedade-do-cansaço.png

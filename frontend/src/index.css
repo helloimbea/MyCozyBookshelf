@@ -26,12 +26,58 @@
   --radius-pill: 999px;
   --shadow-soft: 0 8px 24px rgba(117, 100, 86, 0.12);
 
+  /* papéis que mudam de cor entre os temas */
+  --on-accent: #3f6157; /* texto em cima do verde/menta */
+  --placeholder: rgba(63, 97, 87, 0.65);
+  --header-hover: rgba(255, 255, 255, 0.4);
+  --header-active: rgba(255, 255, 255, 0.6);
+  --ghost-hover: rgba(117, 100, 86, 0.08);
+  --soft-hover: rgba(255, 255, 255, 0.5);
+
   font-family: 'Quicksand', system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: var(--brown-text);
   background: var(--beige);
   -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+
+/*
+  Tema escuro: um cantinho de leitura à noite.
+  Fundos viram marrom-escuro quente; menta, verde e marrom continuam sendo a identidade.
+  O tema é escolhido no botão do header (ver src/theme.ts) e começa pelo do sistema.
+*/
+:root[data-theme='dark'] {
+  --mint: #1f463e;
+  --sky: #1c393d;
+  --sky-soft: #26393a;
+  --green: #91ebc8;
+  --green-hover: #aef3d8;
+  --green-2: #33433d;
+  --green-dark: #8bf5d7;
+  --mint-light: #2b3c37;
+  --mint-pale: #3a4e47;
+  --brown: #9c8b6c;
+  --brown-dark: #7a6c53;
+  --brown-text: #ece2d3;
+  --brown-deep: #231e1b; /* texto do rodapé: escuro sobre o marrom lê melhor */
+  --beige: #231e1b;
+  --beige-light: #352e29;
+  --beige-border: #8a8358;
+  --white: #2e2824;
+  --danger: #ec8f86;
+  --star: #f0c75e;
+
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  --placeholder: rgba(139, 245, 215, 0.45);
+  --header-hover: rgba(139, 245, 215, 0.12);
+  --header-active: rgba(139, 245, 215, 0.22);
+  --ghost-hover: rgba(236, 226, 211, 0.08);
+  --soft-hover: rgba(255, 255, 255, 0.06);
+
+  color-scheme: dark;
 }
 
 *,
@@ -201,7 +247,7 @@ textarea {
 
 .btn--primary {
   background: var(--green);
-  color: var(--green-dark);
+  color: var(--on-accent);
 }
 
 .btn--primary:hover {
@@ -223,7 +269,7 @@ textarea {
 }
 
 .btn--ghost:hover {
-  background: rgba(117, 100, 86, 0.08);
+  background: var(--ghost-hover);
 }
 
 .btn--danger {
@@ -239,6 +285,23 @@ textarea {
   padding: 8px 16px;
   font-size: 0.9rem;
   border-radius: var(--radius-sm);
+}
+
+/* botão com cara de link (ex.: "ver demonstração") */
+.link-button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-weight: 700;
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-decoration-color: var(--green);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.link-button:hover {
+  text-decoration-color: var(--green-dark);
 }
 
 /* ---------- formulários ---------- */
@@ -274,7 +337,7 @@ textarea {
 }
 
 .input::placeholder {
-  color: rgba(63, 97, 87, 0.65);
+  color: var(--placeholder);
 }
 
 .input:focus {
@@ -316,7 +379,7 @@ textarea.input {
 
 .segmented button[aria-selected='true'] {
   background: var(--white);
-  box-shadow: 0 2px 6px rgba(86, 117, 108, 0.15);
+  box-shadow: var(--shadow-soft);
 }
 
 /* chips / tags */
@@ -379,5 +442,5 @@ textarea.input {
 }
 
 .tag-input__field::placeholder {
-  color: rgba(63, 97, 87, 0.65);
+  color: var(--placeholder);
 }

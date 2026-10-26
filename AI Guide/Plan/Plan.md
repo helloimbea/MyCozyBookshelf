@@ -49,6 +49,17 @@ O azul menta, o verde e o marrom são obrigatórios.
 
 > Os valores acima são uma base; ajustes finos de tom são permitidos, desde que a paleta continue reconhecível.
 
+### Modo demonstração
+- Para quem visita o site (ex.: portfólio), o botão **"ver demonstração"** (no início e no login) abre uma estante de exemplo com usuário "visitante", livros com capa, reflexões e uma reflexão fixada.
+- A estante de demonstração é recriada do zero a cada entrada e mostra uma faixa avisando que é uma demonstração, com o botão "criar minha estante".
+- Os livros ficam em `frontend/src/services/demoData.ts` e as capas em `frontend/public/demo/` (versões reduzidas das imagens de `AI Guide/Assets/`). Resumos e reflexões são textos próprios, não trechos dos livros.
+
+### Tema escuro
+- O site tem **tema claro e escuro**. Ele começa no tema do sistema e o usuário troca no botão de sol/lua do header; a escolha fica salva.
+- O escuro é um "cantinho de leitura à noite": fundos em marrom-escuro quente, header em verde-menta escuro, e o **menta, o verde e o marrom continuam sendo a identidade** (botões verdes, textos de destaque em menta, madeira da estante e rodapé marrons).
+- As cores ficam em variáveis CSS em `frontend/src/index.css` (`:root` e `:root[data-theme='dark']`). Telas e componentes novos devem usar essas variáveis, nunca cores fixas, para funcionar nos dois temas.
+- As capas dos livros (inclusive o placeholder) têm as mesmas cores nos dois temas.
+
 ### Plantas
 - Manter algumas plantas decorativas (vasos pendurados e vasinhos), como no projeto original.
 - Arquivos: `AI Guide/Assets/plantar.png` (vaso pendurado) e `AI Guide/Assets/plantar2.png` (vasinho).
