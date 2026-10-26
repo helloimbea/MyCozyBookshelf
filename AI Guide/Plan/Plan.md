@@ -89,11 +89,29 @@ As referências visuais do projeto original estão em `AI Guide/References/`
 - Mesma regra: só ajustes para melhorar a qualidade visual.
 
 ### Adicionar livro
-- Formulário para cadastrar um livro que o usuário leu (ex.: título, autor, capa e a reflexão sobre o livro).
+- Formulário para cadastrar um livro que o usuário leu.
+- O cadastro deve ser rápido: só o obrigatório precisa ser preenchido na hora. Os campos opcionais podem ser preenchidos no cadastro ou adicionados/editados depois.
+
+| Campo             | Obrigatório no cadastro? | Observação                                       |
+|-------------------|--------------------------|--------------------------------------------------|
+| Título            | **sim**                  | único campo obrigatório                          |
+| Capa              | não                      | imagem (URL ou upload); sem capa → placeholder   |
+| Autor             | não                      |                                                  |
+| Resumo            | não                      | texto curto sobre o livro                        |
+| Reflexão          | não                      | o que o usuário sentiu/aprendeu com o livro      |
+| Número de páginas | não                      | número inteiro positivo                          |
+| Gênero            | não                      |                                                  |
+| Tags              | não                      | várias por livro, criadas livremente             |
+| Estrelas          | não                      | avaliação de 1 a 5                               |
+
+**Capa placeholder:** quando o livro não tem capa, o site mostra uma capa padrão fofinha
+no estilo do projeto (flat, arredondada, nas cores da paleta, com um detalhe como o camaleão
+ou uma plantinha) e o título do livro escrito nela. O placeholder é gerado no frontend, e no
+banco a capa fica vazia. Assim que o usuário adicionar uma capa, ela substitui o placeholder.
 
 ### Biblioteca / minha estante
 - Mostra todos os livros cadastrados pelo usuário **como se estivessem numa prateleira real** (livros lado a lado em prateleiras de madeira, no estilo fofo/flat do site).
-- Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro.
+- Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro e completar ou editar os campos opcionais (autor, resumo, páginas, gênero, tags, estrelas).
 
 ## 5. MVP
 
@@ -101,7 +119,7 @@ Escopo do MVP (por enquanto é só isso):
 
 1. Cadastro e login de usuário
 2. Header novo (sem carrinho, com mais botões)
-3. Adicionar livro (com reflexão)
+3. Adicionar livro (só o título é obrigatório; demais campos opcionais)
 4. Biblioteca com visual de prateleira
 5. Tela inicial personalizada com a reflexão fixada
 
@@ -119,7 +137,10 @@ Tudo que estiver fora dessa lista fica para depois — não implementar sem pedi
 
 ### Modelo de dados (rascunho)
 - **Usuário**: nome, email, senha (hash).
-- **Livro**: pertence a um usuário; título, autor, capa (URL ou upload), data de cadastro.
+- **Livro**: pertence a um usuário.
+  - Obrigatórios: título, data de cadastro (automática).
+  - Opcionais (nullable): capa (URL ou upload), autor, resumo, número de páginas, gênero, estrelas (1–5).
+  - Tags: relação muitos-para-muitos (um livro tem várias tags; tags pertencem ao usuário).
 - **Reflexão**: pertence a um livro; texto, data.
 - **Reflexão fixada na home**: referência a uma reflexão existente **ou** um texto livre escrito só para o início.
 
