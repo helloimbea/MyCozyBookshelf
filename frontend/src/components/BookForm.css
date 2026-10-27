@@ -1,4 +1,4 @@
-﻿.book-form {
+.book-form {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 40px;
@@ -84,7 +84,7 @@
   .book-form__more {
     grid-template-columns: minmax(0, 1fr);
   }
-  /* no celular os botões ocupam a largura toda, com o principal em cima */
+  /* on mobile the buttons take the full width, with the main one on top */
   .book-form__actions {
     flex-direction: column-reverse;
     align-items: stretch;

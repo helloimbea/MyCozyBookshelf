@@ -1,27 +1,31 @@
 import { useNavigate } from 'react-router'
 import { useAuth } from '../auth/context'
+import { useI18n } from '../i18n/context'
 import './DemoBanner.css'
 
-/** Faixa que avisa que a pessoa está na estante de demonstração. */
+/** Strip telling the person they are on the demo shelf. */
 export function DemoBanner() {
   const { user, logout } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   if (!user?.demo) return null
 
   return (
     <div className="demo-banner">
       <p>
-        você está na <strong>estante de demonstração</strong>: pode mexer à vontade.
+        {t.demo.bannerBefore}
+        <strong>{t.demo.bannerStrong}</strong>
+        {t.demo.bannerAfter}
       </p>
       <button
         type="button"
         className="demo-banner__cta"
         onClick={async () => {
           await logout()
-          navigate('/cadastro')
+          navigate('/signup')
         }}
       >
-        criar minha estante
+        {t.demo.createMine}
       </button>
     </div>
   )

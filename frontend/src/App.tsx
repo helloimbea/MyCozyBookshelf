@@ -1,4 +1,4 @@
-﻿import { Navigate, Route, Routes } from 'react-router'
+import { Navigate, Route, Routes } from 'react-router'
 import { RequireAuth } from './auth/RequireAuth'
 import { DemoBanner } from './components/DemoBanner'
 import { Footer } from './components/Footer'
@@ -21,10 +21,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/cadastro" element={<Signup />} />
-          <Route path="/estante" element={<RequireAuth><Shelf /></RequireAuth>} />
-          <Route path="/adicionar" element={<RequireAuth><AddBook /></RequireAuth>} />
-          <Route path="/livro/:id" element={<RequireAuth><BookDetail /></RequireAuth>} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/shelf" element={<RequireAuth><Shelf /></RequireAuth>} />
+          <Route path="/add" element={<RequireAuth><AddBook /></RequireAuth>} />
+          <Route path="/book/:id" element={<RequireAuth><BookDetail /></RequireAuth>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

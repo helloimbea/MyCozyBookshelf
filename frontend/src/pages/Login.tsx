@@ -1,11 +1,13 @@
-﻿import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/context'
 import { DemoButton } from '../components/DemoButton'
+import { errorText, useI18n } from '../i18n/context'
 import { AuthLayout } from './AuthLayout'
 
 export function Login() {
   const { login } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   const from = (useLocation().state as { from?: string } | null)?.from ?? '/'
   const [email, setEmail] = useState('')
@@ -21,32 +23,35 @@ export function Login() {
       await login(email, password)
       navigate(from, { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'algo deu errado, tente de novo.')
+      setError(errorText(err, t))
       setBusy(false)
     }
   }
 
   return (
-    <AuthLayout title="login" greeting="oi amigo, que bom ter você de volta!">
+    <AuthLayout title={t.auth.loginTitle} greeting={t.auth.loginGreeting}>
       <form onSubmit={handleSubmit}>
         <label className="field">
-          <span className="field__label">email</span>
-          <input className="input" type="email" required autoComplete="email" placeholder="digite seu email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <span className="field__label">{t.auth.email}</span>
+          <input className="input" type="email" required autoComplete="email" placeholder={t.auth.emailPlaceholder} value={email} onChange={(e) => setEmail(e.target.value)} />
         </label>
         <label className="field">
-          <span className="field__label">senha</span>
-          <input className="input" type="password" required autoComplete="current-password" placeholder="digite sua senha" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <span className="field__label">{t.auth.password}</span>
+          <input className="input" type="password" required autoComplete="current-password" placeholder={t.auth.passwordPlaceholder} value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         {error && <p className="form-error">{error}</p>}
         <button type="submit" className="btn btn--primary" disabled={busy}>
-          entrar
+          {t.auth.enter}
         </button>
       </form>
       <p className="auth-card__switch">
-        não tem uma conta? <Link to="/cadastro" state={{ from }}>criar conta</Link>
+        {t.auth.noAccount}{' '}
+        <Link to="/signup" state={{ from }}>
+          {t.auth.createAccount}
+        </Link>
       </p>
       <p className="auth-card__switch">
-        só quer dar uma olhadinha? <DemoButton className="link-button" />
+        {t.demo.justLooking} <DemoButton className="link-button" />
       </p>
     </AuthLayout>
   )

@@ -1,4 +1,4 @@
-﻿.cover {
+.cover {
   aspect-ratio: 2 / 3;
   width: 100%;
   border-radius: 8px 16px 16px 8px;
@@ -15,7 +15,7 @@
   object-fit: cover;
 }
 
-/* cqw só funciona dentro do container, por isso o placeholder é um filho de .cover */
+/* cqw only works inside the container, so the placeholder is a child of .cover */
 .cover__placeholder {
   height: 100%;
   position: relative;
@@ -30,7 +30,7 @@
   color: var(--cover-fg);
 }
 
-/* lombada */
+/* spine */
 .cover__placeholder::before {
   content: '';
   position: absolute;
@@ -39,7 +39,7 @@
   background: rgba(0, 0, 0, 0.08);
 }
 
-/* moldurinha interna */
+/* little inner frame */
 .cover__placeholder::after {
   content: '';
   position: absolute;

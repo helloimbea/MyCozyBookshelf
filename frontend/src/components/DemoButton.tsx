@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router'
 import { useAuth } from '../auth/context'
+import { useI18n } from '../i18n/context'
 
-/** Abre a estante de demonstração, já cheia de livros de exemplo. */
+/** Opens the demo shelf, already full of sample books, in the current language. */
 export function DemoButton({ className = 'btn btn--ghost' }: { className?: string }) {
   const { startDemo } = useAuth()
+  const { lang, t } = useI18n()
   const navigate = useNavigate()
 
   return (
@@ -11,11 +13,11 @@ export function DemoButton({ className = 'btn btn--ghost' }: { className?: strin
       type="button"
       className={className}
       onClick={async () => {
-        await startDemo()
-        navigate('/estante')
+        await startDemo(lang)
+        navigate('/shelf')
       }}
     >
-      ver demonstração
+      {t.demo.button}
     </button>
   )
 }

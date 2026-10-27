@@ -1,20 +1,21 @@
-﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
+import { errorText, useI18n } from '../i18n/context'
+import type { BookSuggestion } from '../services/bookSearch'
 import type { BookInput, NewReflection, ReadingStatus } from '../types'
 import { fileToCoverDataUrl } from '../utils/image'
 import { parsePage } from '../utils/reading'
 import { BookCover } from './BookCover'
 import { ReflectionField } from './ReflectionField'
-import { TitleSearch } from './TitleSearch'
-import type { BookSuggestion } from '../services/bookSearch'
 import { StarRating } from './StarRating'
 import { TagInput } from './TagInput'
+import { TitleSearch } from './TitleSearch'
 import './BookForm.css'
 
 type Props = {
   initial?: BookInput
-  /** No cadastro o formulário também aceita a primeira reflexão. */
+  /** When adding a book, the form also takes the first reflection. */
   withReflection?: boolean
-  /** No cadastro o título sugere livros (Google Books / Open Library) e preenche o resto. */
+  /** When adding a book, the title suggests books (Google Books / Open Library) and fills in the rest. */
   withSearch?: boolean
   submitLabel: string
   onSubmit: (input: BookInput, reflection?: NewReflection) => Promise<void>
@@ -24,6 +25,7 @@ type Props = {
 const EMPTY: BookInput = { title: '', tags: [], status: 'read' }
 
 export function BookForm({ initial = EMPTY, withReflection = false, withSearch = false, submitLabel, onSubmit, onCancel }: Props) {
+  const { t } = useI18n()
   const [values, setValues] = useState<BookInput>(initial)
   const [pagesText, setPagesText] = useState(initial.pages ? String(initial.pages) : '')
   const [reflection, setReflection] = useState('')
@@ -39,18 +41,18 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
     setValues((v) => ({ ...v, [key]: value }))
   }
 
-  /** Preenche o formulário com o livro escolhido na busca (só o que a busca trouxe). */
+  /** Fills the form with the book picked in the search (only what the search returned). */
   function fillFromSuggestion(book: BookSuggestion) {
     setValues((v) => ({
       ...v,
       title: book.title,
       author: book.author ?? v.author,
-      genre: book.genre ?? v.genre,
+      genre: book.genre ? t.genres[book.genre] : v.genre,
       coverUrl: book.coverUrl ?? v.coverUrl,
     }))
     if (book.pages) setPagesText(String(book.pages))
     if (book.coverUrl) setCoverMode('link')
-    setShowMore(true) // abre os detalhes para a pessoa ver o que foi preenchido
+    setShowMore(true) // opens the details so the person sees what was filled in
   }
 
   async function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -60,19 +62,19 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
     try {
       set('coverUrl', await fileToCoverDataUrl(file))
     } catch {
-      setError('não consegui abrir essa imagem.')
+      setError(t.form.imageError)
     }
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!values.title.trim()) {
-      setError('o livro precisa de um título.')
+      setError(t.errors.needTitle)
       return
     }
     const pages = pagesText ? Number(pagesText) : undefined
     if (pages !== undefined && (!Number.isInteger(pages) || pages <= 0)) {
-      setError('o número de páginas precisa ser um número inteiro maior que zero.')
+      setError(t.form.pagesError)
       return
     }
     setError('')
@@ -80,7 +82,7 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
     try {
       await onSubmit({ ...values, pages }, withReflection ? { text: reflection, page: parsePage(reflectionPage) } : undefined)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'algo deu errado, tente de novo.')
+      setError(errorText(err, t))
       setBusy(false)
     }
   }
@@ -90,18 +92,18 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
       <div className="book-form__cover">
         <BookCover title={values.title} author={values.author} coverUrl={values.coverUrl} />
 
-        <div className="segmented" role="tablist" aria-label="como adicionar a capa">
+        <div className="segmented" role="tablist" aria-label={t.form.coverHow}>
           <button type="button" role="tab" aria-selected={coverMode === 'upload'} onClick={() => setCoverMode('upload')}>
-            enviar
+            {t.form.upload}
           </button>
           <button type="button" role="tab" aria-selected={coverMode === 'link'} onClick={() => setCoverMode('link')}>
-            link
+            {t.form.link}
           </button>
         </div>
 
         {coverMode === 'upload' ? (
           <label className="btn btn--soft btn--small book-form__file">
-            escolher imagem
+            {t.form.chooseImage}
             <input type="file" accept="image/*" onChange={handleFile} />
           </label>
         ) : (
@@ -116,28 +118,28 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
 
         {values.coverUrl ? (
           <button type="button" className="btn btn--ghost btn--small" onClick={() => set('coverUrl', undefined)}>
-            tirar capa
+            {t.form.removeCover}
           </button>
         ) : (
-          <p className="book-form__hint">sem capa? a gente faz uma fofinha pra você.</p>
+          <p className="book-form__hint">{t.form.noCover}</p>
         )}
       </div>
 
       <div className="book-form__fields">
         {withSearch ? (
           <div className="field">
-            <span className="field__label">título</span>
+            <span className="field__label">{t.form.title}</span>
             <TitleSearch value={values.title} onChange={(title) => set('title', title)} onPick={fillFromSuggestion} autoFocus={!initial.title} />
-            <span className="field__hint">comece a digitar que a gente procura o livro pra você.</span>
+            <span className="field__hint">{t.form.searchHint}</span>
           </div>
         ) : (
           <label className="field">
-            <span className="field__label">título</span>
+            <span className="field__label">{t.form.title}</span>
             <input
               className="input"
               value={values.title}
               onChange={(e) => set('title', e.target.value)}
-              placeholder="qual livro você leu?"
+              placeholder={t.form.titlePlaceholder}
               required
               autoFocus={!initial.title}
             />
@@ -145,52 +147,52 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
         )}
 
         <div className="field">
-          <span className="field__label">como está essa leitura?</span>
-          <div className="segmented book-form__status" role="radiogroup" aria-label="como está essa leitura?">
+          <span className="field__label">{t.form.statusQuestion}</span>
+          <div className="segmented book-form__status" role="radiogroup" aria-label={t.form.statusQuestion}>
             {(['reading', 'read'] as ReadingStatus[]).map((s) => (
               <button key={s} type="button" role="radio" aria-checked={status === s} onClick={() => set('status', s)}>
-                {s === 'reading' ? 'lendo' : 'lido'}
+                {t.status[s]}
               </button>
             ))}
           </div>
-          {status === 'reading' && <span className="field__hint">não precisa terminar o livro pra refletir: vá anotando enquanto lê.</span>}
+          {status === 'reading' && <span className="field__hint">{t.form.statusReadingHint}</span>}
         </div>
 
         <button type="button" className="book-form__toggle" aria-expanded={showMore} onClick={() => setShowMore((s) => !s)}>
           <span aria-hidden="true">{showMore ? '−' : '+'}</span>
-          {showMore ? 'menos detalhes' : 'quer contar mais? (opcional)'}
+          {showMore ? t.form.less : t.form.more}
         </button>
 
         {showMore && (
           <div className="book-form__more">
             <label className="field">
-              <span className="field__label">autor</span>
-              <input className="input" value={values.author ?? ''} onChange={(e) => set('author', e.target.value)} placeholder="quem escreveu" />
+              <span className="field__label">{t.form.author}</span>
+              <input className="input" value={values.author ?? ''} onChange={(e) => set('author', e.target.value)} placeholder={t.form.authorPlaceholder} />
             </label>
             <label className="field">
-              <span className="field__label">gênero</span>
-              <input className="input" value={values.genre ?? ''} onChange={(e) => set('genre', e.target.value)} placeholder="romance, fantasia..." />
+              <span className="field__label">{t.form.genre}</span>
+              <input className="input" value={values.genre ?? ''} onChange={(e) => set('genre', e.target.value)} placeholder={t.form.genrePlaceholder} />
             </label>
             <label className="field">
-              <span className="field__label">número de páginas</span>
-              <input className="input" type="number" min={1} step={1} inputMode="numeric" value={pagesText} onChange={(e) => setPagesText(e.target.value)} placeholder="ex.: 320" />
+              <span className="field__label">{t.form.pages}</span>
+              <input className="input" type="number" min={1} step={1} inputMode="numeric" value={pagesText} onChange={(e) => setPagesText(e.target.value)} placeholder={t.form.pagesPlaceholder} />
             </label>
             <div className="field">
-              <span className="field__label">estrelas</span>
+              <span className="field__label">{t.form.stars}</span>
               <StarRating value={values.stars} onChange={(stars) => set('stars', stars)} />
             </div>
             <label className="field book-form__wide">
-              <span className="field__label">resumo</span>
-              <textarea className="input" value={values.summary ?? ''} onChange={(e) => set('summary', e.target.value)} placeholder="sobre o que é o livro, com as suas palavras" />
+              <span className="field__label">{t.form.summary}</span>
+              <textarea className="input" value={values.summary ?? ''} onChange={(e) => set('summary', e.target.value)} placeholder={t.form.summaryPlaceholder} />
             </label>
             <div className="field book-form__wide">
-              <span className="field__label">tags</span>
+              <span className="field__label">{t.form.tags}</span>
               <TagInput value={values.tags} onChange={(tags) => set('tags', tags)} />
             </div>
             {withReflection && (
               <div className="field book-form__wide">
-                <span className="field__label">{status === 'reading' ? 'reflexão até aqui' : 'reflexão'}</span>
-                <span className="field__hint">todo livro tem um aprendizado, até os de ficção.</span>
+                <span className="field__label">{status === 'reading' ? t.form.reflectionSoFar : t.form.reflection}</span>
+                <span className="field__hint">{t.form.reflectionHint}</span>
                 <ReflectionField value={reflection} onChange={setReflection} genre={values.genre} page={reflectionPage} onPageChange={setReflectionPage} />
               </div>
             )}
@@ -202,7 +204,7 @@ export function BookForm({ initial = EMPTY, withReflection = false, withSearch =
         <div className="book-form__actions">
           {onCancel && (
             <button type="button" className="btn btn--ghost" onClick={onCancel}>
-              cancelar
+              {t.common.cancel}
             </button>
           )}
           <button type="submit" className="btn btn--primary" disabled={busy}>

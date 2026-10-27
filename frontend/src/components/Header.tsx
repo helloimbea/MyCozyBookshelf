@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router'
-import camaleao from '../assets/camaleao.png'
+import chameleon from '../assets/chameleon.png'
 import { useAuth } from '../auth/context'
+import { useI18n } from '../i18n/context'
+import { LanguageChoice, LanguageMenu } from './LanguageSwitch'
 import { ThemeToggle } from './ThemeToggle'
 import './Header.css'
 
 export function Header() {
   const { user, logout } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const close = () => setMenuOpen(false)
 
-  // no celular o menu lateral trava a rolagem da página e fecha com Esc
+  // on mobile the side menu locks the page scroll and closes with Esc
   useEffect(() => {
     if (!menuOpen) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
@@ -33,45 +36,47 @@ export function Header() {
     <header className="header">
       <div className="header__inner">
         <Link to="/" className="header__brand" onClick={close}>
-          <img src={camaleao} alt="" className="header__logo" />
+          <img src={chameleon} alt="" className="header__logo" />
           <span>my cozy bookshelf</span>
         </Link>
 
         <div className={menuOpen ? 'header__backdrop is-open' : 'header__backdrop'} onClick={close} aria-hidden="true" />
 
         <div className="header__actions">
-          <nav id="menu-principal" className={menuOpen ? 'header__nav is-open' : 'header__nav'} aria-label="menu principal">
-            <button type="button" className="header__close" aria-label="fechar menu" onClick={close}>
+          <nav id="main-menu" className={menuOpen ? 'header__nav is-open' : 'header__nav'} aria-label={t.nav.mainMenu}>
+            <button type="button" className="header__close" aria-label={t.nav.closeMenu} onClick={close}>
               ×
             </button>
             <NavLink to="/" end className="header__link" onClick={close}>
-              início
+              {t.nav.home}
             </NavLink>
-            <NavLink to="/estante" className="header__link" onClick={close}>
-              minha estante
+            <NavLink to="/shelf" className="header__link" onClick={close}>
+              {t.nav.shelf}
             </NavLink>
-            <NavLink to="/adicionar" className="header__link" onClick={close}>
-              adicionar livro
+            <NavLink to="/add" className="header__link" onClick={close}>
+              {t.nav.addBook}
             </NavLink>
             {user ? (
               <button type="button" className="header__link" onClick={handleLogout}>
-                sair
+                {t.nav.logout}
               </button>
             ) : (
               <NavLink to="/login" className="header__link" onClick={close}>
-                login
+                {t.nav.login}
               </NavLink>
             )}
+            <LanguageChoice />
           </nav>
 
+          <LanguageMenu />
           <ThemeToggle />
 
           <button
             type="button"
             className="header__burger"
-            aria-label="abrir menu"
+            aria-label={t.nav.openMenu}
             aria-expanded={menuOpen}
-            aria-controls="menu-principal"
+            aria-controls="main-menu"
             onClick={() => setMenuOpen(true)}
           >
             <span />

@@ -1,8 +1,7 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
+import { useI18n } from '../i18n/context'
 import type { ReadingStatus } from '../types'
 import './ShelfFilters.css'
-
-const STATUS_LABEL: Record<ReadingStatus, string> = { reading: 'lendo', read: 'lido' }
 
 export type Filters = {
   query: string
@@ -15,19 +14,20 @@ type Props = {
   filters: Filters
   genres: string[]
   tags: string[]
-  /** mostra o filtro de leitura (só faz sentido se há livros sendo lidos) */
+  /** shows the reading filter (only makes sense when some books are being read) */
   showStatus?: boolean
   onChange: (filters: Filters) => void
 }
 
 export function ShelfFilters({ filters, genres, tags, showStatus = false, onChange }: Props) {
-  // gêneros e tags ficam recolhidos para não empurrar a estante para baixo
+  const { t } = useI18n()
+  // genres and tags stay collapsed so they don't push the bookcase down
   const [open, setOpen] = useState(false)
   const activeCount = (filters.status ? 1 : 0) + (filters.genre ? 1 : 0) + filters.tags.length
   const hasOptions = showStatus || genres.length > 0 || tags.length > 0
 
   function toggleTag(tag: string) {
-    const next = filters.tags.includes(tag) ? filters.tags.filter((t) => t !== tag) : [...filters.tags, tag]
+    const next = filters.tags.includes(tag) ? filters.tags.filter((x) => x !== tag) : [...filters.tags, tag]
     onChange({ ...filters, tags: next })
   }
 
@@ -43,8 +43,8 @@ export function ShelfFilters({ filters, genres, tags, showStatus = false, onChan
             type="search"
             value={filters.query}
             onChange={(e) => onChange({ ...filters, query: e.target.value })}
-            placeholder="procurar pelo título"
-            aria-label="procurar pelo título"
+            placeholder={t.filters.searchPlaceholder}
+            aria-label={t.filters.searchPlaceholder}
           />
         </label>
 
@@ -53,36 +53,36 @@ export function ShelfFilters({ filters, genres, tags, showStatus = false, onChan
             type="button"
             className={open || activeCount ? 'filters__toggle is-on' : 'filters__toggle'}
             aria-expanded={open}
-            aria-controls="filtros-da-estante"
+            aria-controls="shelf-filters"
             onClick={() => setOpen((o) => !o)}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
-            filtrar
+            {t.filters.filter}
             {activeCount > 0 && <span className="filters__count">{activeCount}</span>}
           </button>
         )}
       </div>
 
       {open ? (
-        <div id="filtros-da-estante" className="filters__panel">
+        <div id="shelf-filters" className="filters__panel">
           {showStatus && (
-            <div className="filters__group" role="group" aria-label="filtrar por leitura">
-              <span className="filters__label">leitura</span>
+            <div className="filters__group" role="group" aria-label={t.filters.byReading}>
+              <span className="filters__label">{t.filters.reading}</span>
               {(['reading', 'read'] as ReadingStatus[]).map((s) => {
                 const on = filters.status === s
                 return (
                   <button key={s} type="button" className={on ? 'filter-chip is-on' : 'filter-chip'} aria-pressed={on} onClick={() => onChange({ ...filters, status: on ? '' : s })}>
-                    {STATUS_LABEL[s]}
+                    {t.status[s]}
                   </button>
                 )
               })}
             </div>
           )}
           {genres.length > 0 && (
-            <div className="filters__group" role="group" aria-label="filtrar por gênero">
-              <span className="filters__label">gênero</span>
+            <div className="filters__group" role="group" aria-label={t.filters.byGenre}>
+              <span className="filters__label">{t.filters.genre}</span>
               {genres.map((genre) => {
                 const on = filters.genre === genre
                 return (
@@ -95,8 +95,8 @@ export function ShelfFilters({ filters, genres, tags, showStatus = false, onChan
           )}
 
           {tags.length > 0 && (
-            <div className="filters__group" role="group" aria-label="filtrar por tag">
-              <span className="filters__label">tags</span>
+            <div className="filters__group" role="group" aria-label={t.filters.byTag}>
+              <span className="filters__label">{t.filters.tags}</span>
               {tags.map((tag) => {
                 const on = filters.tags.includes(tag)
                 return (
@@ -110,20 +110,20 @@ export function ShelfFilters({ filters, genres, tags, showStatus = false, onChan
         </div>
       ) : (
         activeCount > 0 && (
-          // painel fechado: mostra só o que está ativo, com "x" para tirar
-          <div className="filters__group" aria-label="filtros ativos">
+          // closed panel: shows only what is active, with an "x" to remove it
+          <div className="filters__group" aria-label={t.filters.active}>
             {filters.status && (
-              <button type="button" className="filter-chip is-on" onClick={() => onChange({ ...filters, status: '' })} aria-label={`tirar filtro ${STATUS_LABEL[filters.status]}`}>
-                {STATUS_LABEL[filters.status]} ×
+              <button type="button" className="filter-chip is-on" onClick={() => onChange({ ...filters, status: '' })} aria-label={t.filters.remove(t.status[filters.status])}>
+                {t.status[filters.status]} ×
               </button>
             )}
             {filters.genre && (
-              <button type="button" className="filter-chip is-on" onClick={() => onChange({ ...filters, genre: '' })} aria-label={`tirar filtro ${filters.genre}`}>
+              <button type="button" className="filter-chip is-on" onClick={() => onChange({ ...filters, genre: '' })} aria-label={t.filters.remove(filters.genre)}>
                 {filters.genre} ×
               </button>
             )}
             {filters.tags.map((tag) => (
-              <button key={tag} type="button" className="filter-chip is-on" onClick={() => toggleTag(tag)} aria-label={`tirar filtro ${tag}`}>
+              <button key={tag} type="button" className="filter-chip is-on" onClick={() => toggleTag(tag)} aria-label={t.filters.remove(tag)}>
                 #{tag} ×
               </button>
             ))}
@@ -133,7 +133,7 @@ export function ShelfFilters({ filters, genres, tags, showStatus = false, onChan
 
       {(filters.query || activeCount > 0) && (
         <button type="button" className="filters__clear" onClick={() => onChange({ query: '', genre: '', tags: [], status: '' })}>
-          limpar filtros
+          {t.filters.clear}
         </button>
       )}
     </div>

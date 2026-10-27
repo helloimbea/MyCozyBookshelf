@@ -1,10 +1,12 @@
-﻿// API simulada no navegador (localStorage) enquanto o backend Spring Boot não tem os endpoints.
-// As funções já são assíncronas e no formato que a API real vai ter: quando o backend existir,
-// basta trocar o corpo delas por chamadas fetch('/api/...') sem mexer nas telas.
+// API mocked in the browser (localStorage) while the Spring Boot backend has no endpoints yet.
+// The functions are already async and shaped like the real API: once the backend exists,
+// only their bodies change to fetch('/api/...') calls, without touching the screens.
+import { MESSAGES, type Lang } from '../i18n/context'
 import type { Book, BookInput, NewReflection, PinnedReflection, PinnedView, Reflection, User } from '../types'
 import { DEMO_BOOKS } from './demoData'
+import { AppError } from './errors'
 
-// Senha em texto puro só existe neste mock; o backend vai guardar apenas o hash.
+// The plain-text password only exists in this mock; the backend will store just a hash.
 type StoredUser = User & { password: string }
 
 type Db = {
@@ -21,7 +23,7 @@ function load(): Db {
     const raw = localStorage.getItem(DB_KEY)
     if (raw) return JSON.parse(raw) as Db
   } catch {
-    // dados corrompidos: começa do zero
+    // corrupted data: start from scratch
   }
   return { users: [], books: [], pinned: {} }
 }
@@ -30,7 +32,7 @@ function save(db: Db) {
   try {
     localStorage.setItem(DB_KEY, JSON.stringify(db))
   } catch {
-    throw new Error('não coube mais nada no navegador. tente uma capa menor.')
+    throw new AppError('storageFull')
   }
 }
 
@@ -44,14 +46,14 @@ function toUser({ id, name, email, demo }: StoredUser): User {
 
 function requireUserId(): string {
   const id = localStorage.getItem(SESSION_KEY)
-  if (!id) throw new Error('você precisa entrar primeiro.')
+  if (!id) throw new AppError('notLoggedIn')
   return id
 }
 
 function findOwnBook(db: Db, bookId: string): Book {
   const userId = requireUserId()
   const book = db.books.find((b) => b.id === bookId && b.userId === userId)
-  if (!book) throw new Error('livro não encontrado.')
+  if (!book) throw new AppError('bookNotFound')
   return book
 }
 
@@ -72,12 +74,12 @@ function cleanInput(input: BookInput): BookInput {
 
 function makeReflection(input: NewReflection, final = false): Reflection {
   const text = input.text.trim()
-  if (!text) throw new Error('escreva alguma coisa antes de guardar.')
+  if (!text) throw new AppError('emptyReflection')
   const page = input.page && input.page > 0 ? Math.floor(input.page) : undefined
   return { id: newId(), text, createdAt: new Date().toISOString(), ...(page && { page }), ...(final && { final }) }
 }
 
-// ---------- autenticação ----------
+// ---------- auth ----------
 
 export function getSessionUser(): User | null {
   const id = localStorage.getItem(SESSION_KEY)
@@ -88,9 +90,9 @@ export function getSessionUser(): User | null {
 export async function register(name: string, email: string, password: string): Promise<User> {
   const db = load()
   const normalized = email.trim().toLowerCase()
-  if (!name.trim()) throw new Error('me diga como devo te chamar.')
-  if (password.length < 8) throw new Error('a senha precisa ter pelo menos 8 dígitos.')
-  if (db.users.some((u) => u.email === normalized)) throw new Error('já existe uma conta com esse email.')
+  if (!name.trim()) throw new AppError('needName')
+  if (password.length < 8) throw new AppError('shortPassword')
+  if (db.users.some((u) => u.email === normalized)) throw new AppError('emailTaken')
   const user: StoredUser = { id: newId(), name: name.trim(), email: normalized, password }
   db.users.push(user)
   save(db)
@@ -101,7 +103,7 @@ export async function register(name: string, email: string, password: string): P
 export async function login(email: string, password: string): Promise<User> {
   const normalized = email.trim().toLowerCase()
   const user = load().users.find((u) => u.email === normalized && u.password === password)
-  if (!user) throw new Error('email ou senha não conferem.')
+  if (!user) throw new AppError('badCredentials')
   localStorage.setItem(SESSION_KEY, user.id)
   return toUser(user)
 }
@@ -109,23 +111,24 @@ export async function login(email: string, password: string): Promise<User> {
 const DEMO_EMAIL = 'demo@mycozybookshelf.app'
 const DAY = 24 * 60 * 60 * 1000
 
-/** Entra na estante de demonstração, recriada do zero a cada vez com os livros de exemplo. */
-export async function startDemo(): Promise<User> {
+/** Opens the demo shelf, rebuilt from scratch every time, in the given language. */
+export async function startDemo(lang: Lang): Promise<User> {
+  const t = MESSAGES[lang]
   const db = load()
   let user = db.users.find((u) => u.email === DEMO_EMAIL)
   if (!user) {
-    // sem senha: não dá pra entrar nela pelo formulário de login, só pelo botão
-    user = { id: newId(), name: 'visitante', email: DEMO_EMAIL, password: '', demo: true }
+    // no password: this account can only be opened through the demo button
+    user = { id: newId(), name: t.demo.visitorName, email: DEMO_EMAIL, password: '', demo: true }
     db.users.push(user)
   }
+  user.name = t.demo.visitorName
   const userId = user.id
   db.books = db.books.filter((b) => b.userId !== userId)
   delete db.pinned[userId]
 
-  // lidos: datas espalhadas pelo último ano, como uma estante de verdade;
-  // lendo: começados nas últimas semanas (ficam juntos no fim da estante)
+  // read books: dates spread over the last year, like a real shelf;
+  // books being read: started in the last weeks, so they sit together at the end of the shelf
   const readingCount = DEMO_BOOKS.filter((d) => d.status === 'reading').length
-  // os lidos terminam antes de começarem os que estão sendo lidos
   const start = Date.now() - (DEMO_BOOKS.length * 12 + readingCount * 7 + 14) * DAY
   let readingIndex = 0
   DEMO_BOOKS.forEach((demo, i) => {
@@ -136,14 +139,17 @@ export async function startDemo(): Promise<User> {
       title: demo.title,
       author: demo.author,
       coverUrl: demo.cover ? `/demo/${demo.cover}` : undefined,
-      genre: demo.genre,
-      tags: demo.tags,
+      genre: t.genres[demo.genre],
+      tags: demo.tags[lang],
       stars: demo.stars,
-      summary: demo.summary,
-      reflections: demo.reflections.map((r, j) => {
-        const { text, page, final } = typeof r === 'string' ? { text: r, page: undefined, final: undefined } : r
-        return { id: newId(), text, createdAt: new Date(addedAt + (j + 1) * 2 * DAY).toISOString(), ...(page && { page }), ...(final && { final }) }
-      }),
+      summary: demo.summary?.[lang],
+      reflections: demo.reflections.map((r, j) => ({
+        id: newId(),
+        text: r.text[lang],
+        createdAt: new Date(addedAt + (j + 1) * 2 * DAY).toISOString(),
+        ...(r.page && { page: r.page }),
+        ...(r.final && { final: true }),
+      })),
       createdAt: new Date(addedAt).toISOString(),
       status: demo.status ?? 'read',
       finishedAt: demo.status === 'reading' ? undefined : new Date(addedAt + (demo.reflections.length + 1) * 2 * DAY).toISOString(),
@@ -163,7 +169,7 @@ export async function logout(): Promise<void> {
   localStorage.removeItem(SESSION_KEY)
 }
 
-// ---------- livros ----------
+// ---------- books ----------
 
 export async function listBooks(): Promise<Book[]> {
   const userId = requireUserId()
@@ -178,7 +184,7 @@ export async function getBook(id: string): Promise<Book> {
 
 export async function createBook(input: BookInput, reflection?: NewReflection): Promise<Book> {
   const data = cleanInput(input)
-  if (!data.title) throw new Error('o livro precisa de um título.')
+  if (!data.title) throw new AppError('needTitle')
   const db = load()
   const now = new Date().toISOString()
   const book: Book = {
@@ -196,12 +202,12 @@ export async function createBook(input: BookInput, reflection?: NewReflection): 
 
 export async function updateBook(id: string, input: BookInput): Promise<Book> {
   const data = cleanInput(input)
-  if (!data.title) throw new Error('o livro precisa de um título.')
+  if (!data.title) throw new AppError('needTitle')
   const db = load()
   const book = findOwnBook(db, id)
   const wasReading = book.status === 'reading'
   Object.assign(book, { coverUrl: undefined, author: undefined, summary: undefined, pages: undefined, genre: undefined, stars: undefined }, data)
-  // a data de conclusão acompanha o status escolhido na edição
+  // the finish date follows the status chosen when editing
   if (data.status === 'reading') book.finishedAt = undefined
   else if (wasReading) book.finishedAt = new Date().toISOString()
   save(db)
@@ -217,7 +223,7 @@ export async function deleteBook(id: string): Promise<void> {
   save(db)
 }
 
-// ---------- reflexões ----------
+// ---------- reflections ----------
 
 export async function addReflection(bookId: string, input: NewReflection): Promise<Reflection> {
   const reflection = makeReflection(input)
@@ -228,7 +234,7 @@ export async function addReflection(bookId: string, input: NewReflection): Promi
   return reflection
 }
 
-/** Marca a leitura como concluída; a reflexão final é opcional. */
+/** Marks the reading as finished; the final reflection is optional. */
 export async function finishReading(bookId: string, finalReflection?: NewReflection): Promise<Book> {
   const db = load()
   const book = findOwnBook(db, bookId)
@@ -248,7 +254,7 @@ export async function deleteReflection(bookId: string, reflectionId: string): Pr
   save(db)
 }
 
-// ---------- reflexão fixada na tela inicial ----------
+// ---------- reflection pinned to the home page ----------
 
 export async function getPinned(): Promise<PinnedView | null> {
   const userId = requireUserId()

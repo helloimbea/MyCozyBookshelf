@@ -1,201 +1,220 @@
-﻿# My Cozy Bookshelf — Plano do Projeto
+# My Cozy Bookshelf — Project Plan
 
-> Este documento é a fonte de verdade do projeto. Antes de implementar qualquer coisa,
-> a IA deve ler este plano e seguir as decisões aqui descritas. Em caso de dúvida
-> que não esteja respondida aqui, pergunte antes de inventar.
+> This document is the project's source of truth. Before implementing anything,
+> the AI must read this plan and follow the decisions described here. If a question
+> is not answered here, ask before making something up.
 
-## 1. Contexto
+## 1. Context
 
-- O projeto nasceu como **"ajuda.me"**: uma lojinha de livros de autoajuda feita em HTML e JavaScript puro.
-- Agora ele está sendo reescrito como um projeto **fullstack**: **Java Spring Boot** (backend) + **React** (frontend).
-- **A ideia central mudou: NÃO É MAIS UMA LOJA DE LIVROS.**
-- O nome agora é **"My Cozy Bookshelf"** (não usar mais "ajuda.me" em lugar nenhum).
+- The project was born as **"ajuda.me"**: a small self-help bookstore built with plain HTML and JavaScript.
+- It is now being rewritten as a **fullstack** project: **Java Spring Boot** (backend) + **React** (frontend).
+- **The core idea changed: IT IS NO LONGER A BOOKSTORE.**
+- The name is now **"My Cozy Bookshelf"** (never use "ajuda.me" anywhere).
 
-## 2. A nova proposta
+## 2. The new proposal
 
-O My Cozy Bookshelf é uma **estante privada**: cada usuário cadastra os livros que leu
-e escreve as **reflexões** que teve com cada um deles.
+My Cozy Bookshelf is a **private bookshelf**: each user adds the books they have read
+and writes the **reflections** each one left them with.
 
-- É pessoal e privado: cada usuário vê apenas os próprios livros e reflexões.
-- A visualização dos livros **simula uma prateleira real**, como se os livros estivessem de fato numa estante.
-- O tom é acolhedor, calmo e íntimo, como um cantinho de leitura.
+- It is personal and private: each user only sees their own books and reflections.
+- The books are displayed **like a real shelf**, as if they were actually standing on a bookcase.
+- The tone is warm, calm and intimate, like a reading nook.
 
-### O que NÃO existe mais (não implementar)
+### What no longer exists (do not implement)
 
-- Carrinho de compras, preços, checkout, pagamento
-- Promoções, descontos, selos de "% OFF", banners de lançamento
-- Catálogo de venda / vitrine de loja
+- Shopping cart, prices, checkout, payment
+- Promotions, discounts, "% OFF" badges, new-release banners
+- Sales catalog / store window
 
-## 3. Identidade visual
+## 3. Language
 
-### Mascote
-- O **camaleão** continua sendo a identidade visual principal (logo no header e ilustração grande nas telas de login/cadastro).
-- Arquivo: `AI Guide/Assets/camaleao.png`
+- **Everything in the repository is in English**: code, identifiers, comments, file names, routes, commit messages, README and this plan.
+- **The site is in three languages: English, Spanish and Portuguese (Brazil).**
+  - All UI text lives in `frontend/src/i18n/` (`messages.en.ts` is the reference; `messages.es.ts` and `messages.pt.ts` must have the same keys, which TypeScript checks).
+  - New UI text must be added to the three files at once. Never hard-code visible text in components.
+  - The starting language comes from the browser (English when it isn't Spanish or Portuguese). The person switches it on the globe button in the header (or in the side menu on mobile), and the choice is saved.
+  - Dates and lists are formatted with `Intl` in the current language. API errors are codes (`AppError`) translated on screen.
+  - The demo data, the reflection prompts and the genre names exist in the three languages.
+- Every language keeps the same voice: **lowercase, warm, like a conversation**.
 
-### Paleta de cores
-Manter a paleta original. **Só é permitido mudar a cor de fundo e detalhes específicos.**
-O azul menta, o verde e o marrom são obrigatórios.
+## 4. Visual identity
 
-| Papel                          | Cor (aprox., tirada das referências) |
-|--------------------------------|--------------------------------------|
-| Azul menta (header)            | `#8BF5D7`                            |
-| Azul (fundo login/cadastro)    | `#6ADCE4`                            |
-| Verde (botões / inputs)        | `#91EBC8`, `#A0D6B2`                 |
-| Verde-menta claro (cards)      | `#D3F4ED`, `#C0FFF1`                 |
-| Marrom (moldura dos cards)     | `#B4A588`                            |
-| Marrom (texto / títulos)       | `#756456`                            |
-| Texto do header (verde escuro) | `#56756C`                            |
-| Bege (fundo da home, borda do header) | `#E9E1D4`, `#D9D5A3`          |
+### Mascot
+- The **chameleon** remains the main visual identity (logo in the header and big illustration on the login/sign-up screens).
+- File: `frontend/src/assets/chameleon.png` (original in `AI Guide/Assets/camaleao.png`).
 
-> Os valores acima são uma base; ajustes finos de tom são permitidos, desde que a paleta continue reconhecível.
+### Color palette
+Keep the original palette. **Only the background color and specific details may change.**
+Mint blue, green and brown are mandatory.
 
-### Modo demonstração
-- Para quem visita o site (ex.: portfólio), o botão **"ver demonstração"** (no início e no login) abre uma estante de exemplo com usuário "visitante", livros com capa, reflexões e uma reflexão fixada.
-- A estante de demonstração é recriada do zero a cada entrada e mostra uma faixa avisando que é uma demonstração, com o botão "criar minha estante".
-- Os livros ficam em `frontend/src/services/demoData.ts` e as capas em `frontend/public/demo/` (versões reduzidas das imagens de `AI Guide/Assets/`). Resumos e reflexões são textos próprios, não trechos dos livros.
+| Role                                | Color (approx., taken from the references) |
+|-------------------------------------|--------------------------------------------|
+| Mint blue (header)                  | `#8BF5D7`                                  |
+| Blue (login/sign-up background)     | `#6ADCE4`                                  |
+| Green (buttons / inputs)            | `#91EBC8`, `#A0D6B2`                       |
+| Light mint green (cards)            | `#D3F4ED`, `#C0FFF1`                       |
+| Brown (card frames)                 | `#B4A588`                                  |
+| Brown (text / titles)               | `#756456`                                  |
+| Header text (dark green)            | `#56756C`                                  |
+| Beige (home background, header border) | `#E9E1D4`, `#D9D5A3`                    |
 
-### Tema escuro
-- O site tem **tema claro e escuro**. Ele começa no tema do sistema e o usuário troca no botão de sol/lua do header; a escolha fica salva.
-- O escuro é um "cantinho de leitura à noite": fundos em marrom-escuro quente, header em verde-menta escuro, e o **menta, o verde e o marrom continuam sendo a identidade** (botões verdes, textos de destaque em menta, madeira da estante e rodapé marrons).
-- As cores ficam em variáveis CSS em `frontend/src/index.css` (`:root` e `:root[data-theme='dark']`). Telas e componentes novos devem usar essas variáveis, nunca cores fixas, para funcionar nos dois temas.
-- As capas dos livros (inclusive o placeholder) têm as mesmas cores nos dois temas.
+> The values above are a base; fine tone adjustments are allowed as long as the palette stays recognizable.
 
-### Plantas
-- Manter algumas plantas decorativas (vasos pendurados e vasinhos), como no projeto original.
-- Arquivos: `AI Guide/Assets/plantar.png` (vaso pendurado) e `AI Guide/Assets/plantar2.png` (vasinho).
+### Demo mode
+- For visitors (e.g. portfolio), the **"see the demo"** button (on the home page and on login) opens a sample shelf with a "visitor" user, books with covers, reflections, books being read and a pinned reflection, in the current language.
+- The demo shelf is rebuilt from scratch every time and shows a strip saying it is a demo, with a "create my shelf" button.
+- The books live in `frontend/src/services/demoData.ts` and the covers in `frontend/public/demo/` (smaller versions of the images in `AI Guide/Assets/`). Titles match the Brazilian editions on the covers; summaries, tags, genres and reflections exist in the three languages. Summaries and reflections are original texts, not quotes from the books.
 
-### Tipografia
-- Fonte **Quicksand** (Google Fonts) — ver `AI Guide/Assets/font.css`.
-- Textos em minúsculas e com tom carinhoso, como no original ("oi amigo, que bom ter você de volta!").
+### Dark theme
+- The site has a **light and a dark theme**. It starts with the system theme and the user switches it on the sun/moon button in the header; the choice is saved.
+- Dark is a "reading nook at night": warm dark brown backgrounds, dark mint header, and **mint, green and brown stay as the identity** (green buttons, mint highlight text, brown bookcase wood and footer).
+- Colors are CSS variables in `frontend/src/index.css` (`:root` and `:root[data-theme='dark']`). New screens and components must use these variables, never fixed colors, to work in both themes.
+- Book covers (including the placeholder) keep the same colors in both themes.
 
-### Voz do projeto: todo livro tem um aprendizado
-A ideia central da identidade é que **todo livro ensina alguma coisa**, não só os de autoajuda ou psicologia.
-O site deve inspirar o usuário a buscar aprendizado também em romances, fantasias, clássicos etc.
+### Plants
+- Keep a few decorative plants (hanging pots and little pots), like in the original project.
+- Files: `frontend/src/assets/hanging-plant.png` and `frontend/src/assets/potted-plant.png` (originals in `AI Guide/Assets/plantar.png` and `plantar2.png`).
 
-Frases-guia (usar com moderação, em poucos lugares escolhidos, nunca em toda tela):
-- **"todo livro tem um aprendizado"**: título do início para quem não está logado e mensagem da estante vazia
-- **"temos algo a aprender com todos os livros"**: frase do rodapé
-- **"escreva aqui o que você aprendeu"**: subtítulo da seção de reflexões do livro
-- **"não precisa terminar o livro pra refletir"**: dica ao marcar um livro como *lendo* e na página de um livro em leitura
+### Typography
+- **Quicksand** font (Google Fonts) — see `AI Guide/Assets/font.css`.
+- Lowercase texts with an affectionate tone, like the original ("hi friend, so good to have you back!").
 
-Onde a ideia aparece na prática:
-- **Perguntas de inspiração no campo de reflexão** (`frontend/src/utils/prompts.ts`): mudam conforme o gênero do livro (ficção, não ficção ou geral) e o botão **"me dá uma ideia"** sorteia outra. Ex.: para ficção, "qual personagem te ensinou alguma coisa?".
-- **Estados vazios**: estante vazia e livro sem reflexão convidam a pensar no que o livro ensinou.
-- **O camaleão**: ele muda de cor conforme o lugar e "pega um pouquinho da cor de cada livro que lê", ou seja, cada livro deixa algo nele. Essa frase aparece com o mascote no início.
-- **Modo demonstração**: os livros de ficção mostram reflexões com aprendizados, não só sentimentos.
+### Project voice: every book has a lesson
+The core idea of the identity is that **every book teaches something**, not only self-help or psychology ones.
+The site should inspire the user to look for lessons in novels, fantasy, classics and so on.
 
-### Estilo
-- **Tudo arredondado e fofo** (cantos bem arredondados em cards, botões, inputs, livros).
-- **Simples e minimalista**, sem excessos, sem elementos sobrando.
-- **Flat**: evitar gradientes pesados, sombras fortes e efeitos chamativos (sombras suaves são ok).
+Guiding phrases (use sparingly, in a few chosen places, never on every screen):
 
-## 4. Telas
+| English | Portuguese | Spanish | Where |
+|---|---|---|---|
+| every book has a lesson | todo livro tem um aprendizado | todo libro tiene una enseñanza | home title for logged-out visitors and empty shelf message |
+| there is something to learn from every book | temos algo a aprender com todos os livros | tenemos algo que aprender de todos los libros | footer |
+| write down what you learned | escreva aqui o que você aprendeu | escribe aquí lo que aprendiste | subtitle of a book's reflections section |
+| you don't need to finish the book to reflect | não precisa terminar o livro pra refletir | no hace falta terminar el libro para reflexionar | hint when marking a book as *reading* and on a book being read |
 
-As referências visuais do projeto original estão em `AI Guide/References/`
+Where the idea shows up in practice:
+- **Inspiring questions in the reflection field** (`frontend/src/utils/prompts.ts` + `prompts` in the i18n files): they change with the book's genre (fiction, non-fiction or general, recognized in the three languages) and the **"give me an idea"** button draws another one. E.g. for fiction, "which character taught you something?".
+- **Empty states**: an empty shelf and a book without reflections invite the person to think about what the book taught them.
+- **The chameleon**: it changes color depending on where it is and "picks up a little of the color of every book it reads", meaning every book leaves something in it. This sentence shows up with the mascot on the home page.
+- **Demo mode**: fiction books show reflections with lessons, not only feelings.
+
+### Style
+- **Everything rounded and cute** (very rounded corners on cards, buttons, inputs, books).
+- **Simple and minimalist**, no excess, nothing extra.
+- **Flat**: avoid heavy gradients, strong shadows and flashy effects (soft shadows are fine).
+
+## 5. Screens
+
+The visual references of the original project are in `AI Guide/References/`
 (`home.png`, `login.png`, `signin.png`).
 
-### Header (todas as telas)
-- **Manter igual ao original**: fundo azul menta, camaleão + nome à esquerda, links à direita, borda inferior bege.
-- Trocar o nome para "My Cozy Bookshelf".
-- **Remover o botão de carrinho de compras.**
-- **Adicionar mais botões** de navegação. Sugestão: `início`, `minha estante`, `adicionar livro`, `login` (ou `sair`, quando logado).
+Routes: `/` (home), `/login`, `/signup`, `/shelf`, `/add`, `/book/:id`.
 
-### Tela inicial (home)
-- **Não mostra mais promoções** nem carrossel de livros à venda.
-- É **personalizável**: o usuário fixa no início uma reflexão, podendo:
-  - escolher uma das suas reflexões já escritas como favorita, **ou**
-  - escrever uma reflexão nova só para fixar ali.
-- Manter o clima do original: fundo claro, plantas decorativas, card central arredondado.
-- A reflexão fixada é o **card principal** do início. Logo abaixo, menor, fica o carrossel **"lembranças da estante"**:
-  - mostra as outras reflexões do usuário (nunca a fixada), das mais novas para as mais antigas, com a capa e o título do livro; clicar abre o livro;
-  - troca sozinho devagar (a cada ~8 s, com fade suave) e pausa com o mouse em cima, com foco do teclado ou quando o sistema pede "reduzir movimento";
-  - tem setinhas e bolinhas para navegar (acima de 8 reflexões, um contador "3 / 17" no lugar das bolinhas);
-  - só aparece quando há 2 ou mais reflexões para mostrar.
+### Header (every screen)
+- **Keep it like the original**: mint blue background, chameleon + name on the left, links on the right, beige bottom border.
+- The name is "my cozy bookshelf".
+- **No shopping cart button.**
+- Navigation buttons: `home`, `my shelf`, `add book`, `login` (or `log out` when logged in), the **language** globe button and the theme button.
+- On mobile: only the logo, the theme button and a hamburger button that opens a side menu with the options (and the language choice at the bottom).
+
+### Home
+- **No promotions** and no carousel of books for sale.
+- It is **customizable**: the user pins a reflection to the home page, either:
+  - picking one of their existing reflections as a favorite, **or**
+  - writing a new reflection just to pin there.
+- Keep the original mood: light background, decorative plants, rounded central card.
+- The pinned reflection is the home page's **main card**. Right below it, smaller, is the **"shelf memories"** carousel:
+  - shows the user's other reflections (never the pinned one), newest first, with the book's cover and title; clicking opens the book;
+  - changes on its own, slowly (every ~8 s, with a soft fade) and pauses on hover, on keyboard focus or when the system asks for "reduced motion";
+  - has arrows and dots to navigate (above 8 reflections, a "3 / 17" counter instead of dots);
+  - only shows up when there are 2 or more reflections to show.
 
 ### Login
-- **Quase igual ao original** (`login.png`): camaleão grande à esquerda, card com moldura marrom à direita.
-- Apenas ajustes necessários para melhorar a qualidade visual (alinhamento, espaçamentos, link "criar conta" estilizado na paleta em vez do azul padrão do navegador, etc.).
+- **Almost the same as the original** (`login.png`): big chameleon on the left, brown-framed card on the right.
+- Only the adjustments needed to improve visual quality (alignment, spacing, "create account" link styled with the palette instead of the browser's default blue, etc.).
 
-### Cadastro (criar conta)
-- **Quase igual ao original** (`signin.png`): mesmos campos (nome, email, senha com mínimo de 8 dígitos, confirmar senha).
-- Mesma regra: só ajustes para melhorar a qualidade visual.
+### Sign-up (create account)
+- **Almost the same as the original** (`signin.png`): same fields (name, email, password with at least 8 characters, confirm password).
+- Same rule: only adjustments to improve visual quality.
 
-### Adicionar livro
-- Formulário para cadastrar um livro que o usuário leu.
-- O cadastro deve ser rápido: só o obrigatório precisa ser preenchido na hora. Os campos opcionais podem ser preenchidos no cadastro ou adicionados/editados depois.
-- **Busca automática de livros**: enquanto o usuário digita o título, aparecem sugestões ("é algum desses?"). Escolher uma preenche título, autor, capa, número de páginas e gênero (traduzido para português). O resumo **não** é preenchido, porque ele deve ser escrito com as palavras do usuário.
-  - Fonte: **Google Books** primeiro; se falhar ou não achar nada, **Open Library** (`frontend/src/services/bookSearch.ts`).
-  - Chave opcional do Google em `VITE_GOOGLE_BOOKS_API_KEY` (`frontend/.env.local`, ver `.env.example`). Sem chave funciona, mas o Google divide a cota por IP.
-  - A busca é só uma ajuda: dá para ignorar e preencher tudo à mão.
+### Add book
+- Form to add a book the user has read (or is reading).
+- Adding must be quick: only what is required needs to be filled in right away. Optional fields can be filled in when adding or added/edited later.
+- **Automatic book search**: while the user types the title, suggestions show up ("is it one of these?"). Picking one fills in title, author, cover, page count and genre (in the current language). The summary is **not** filled in, because it should be written in the user's own words.
+  - Source: **Google Books** first; if it fails or finds nothing, **Open Library** (`frontend/src/services/bookSearch.ts`).
+  - Optional Google key in `VITE_GOOGLE_BOOKS_API_KEY` (`frontend/.env.local`, see `.env.example`). It works without a key, but Google splits the quota by IP.
+  - The search is only a helper: it can be ignored and everything filled in by hand.
 
-| Campo             | Obrigatório no cadastro? | Observação                                       |
-|-------------------|--------------------------|--------------------------------------------------|
-| Título            | **sim**                  | único campo obrigatório                          |
-| Capa              | não                      | imagem (URL ou upload); sem capa → placeholder   |
-| Autor             | não                      |                                                  |
-| Resumo            | não                      | texto curto sobre o livro                        |
-| Reflexão          | não                      | o que o usuário sentiu/aprendeu com o livro      |
-| Número de páginas | não                      | número inteiro positivo                          |
-| Gênero            | não                      |                                                  |
-| Tags              | não                      | várias por livro, criadas livremente             |
-| Estrelas          | não                      | avaliação de 1 a 5                               |
-| Leitura           | já vem marcado "lido"    | "lendo" ou "lido", sempre visível no formulário |
+| Field         | Required when adding? | Notes                                            |
+|---------------|-----------------------|--------------------------------------------------|
+| Title         | **yes**               | the only required field                          |
+| Cover         | no                    | image (URL or upload); no cover → placeholder    |
+| Author        | no                    |                                                  |
+| Summary       | no                    | short text about the book                        |
+| Reflection    | no                    | what the user felt/learned from the book         |
+| Page count    | no                    | positive whole number                            |
+| Genre         | no                    |                                                  |
+| Tags          | no                    | several per book, created freely                 |
+| Stars         | no                    | rating from 1 to 5                               |
+| Reading       | starts as "read"      | "reading" or "read", always visible in the form |
 
-**Capa placeholder:** quando o livro não tem capa, o site mostra uma capa padrão fofinha
-no estilo do projeto (flat, arredondada, nas cores da paleta, com um detalhe como o camaleão
-ou uma plantinha) e o título do livro escrito nela. O placeholder é gerado no frontend, e no
-banco a capa fica vazia. Assim que o usuário adicionar uma capa, ela substitui o placeholder.
+**Placeholder cover:** when a book has no cover, the site shows a cute default cover
+in the project's style (flat, rounded, in the palette colors, with a little leaf detail)
+with the book title written on it. The placeholder is generated in the frontend, and in the
+database the cover stays empty. As soon as the user adds a cover, it replaces the placeholder.
 
-### Biblioteca / minha estante
-- Mostra todos os livros cadastrados pelo usuário **como se estivessem numa prateleira real** (livros lado a lado em prateleiras de madeira, no estilo fofo/flat do site).
-- O usuário pode **procurar livros pelo título** e **filtrar por gênero ou por tags** (sem diferenciar maiúsculas nem acentos). Só os livros encontrados ficam na prateleira.
-- Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro e completar ou editar os campos opcionais (autor, resumo, páginas, gênero, tags, estrelas).
-- Livros que estão sendo lidos têm uma **fitinha de marcador** na capa, e o filtro da estante também tem **leitura: lendo / lido**. O cabeçalho mostra quantos estão "lendo agora".
+### Library / my shelf
+- Shows all the user's books **as if they were on a real shelf** (books side by side on wooden shelves, in the site's cute/flat style).
+- The user can **search books by title** and **filter by genre, tags or reading status** (ignoring case and accents). Only the matching books stay on the shelf.
+- Clicking a book lets the user see/edit that book's reflections and complete or edit the optional fields (author, summary, pages, genre, tags, stars).
+- Books being read have a **bookmark ribbon** on the cover. The header shows how many are "reading now".
 
-### Leitura em andamento e reflexão final
-- **Não é preciso terminar o livro para refletir.** Ao cadastrar, o usuário escolhe **lendo** ou **lido**, e pode ir anotando reflexões enquanto lê.
-- Toda reflexão aceita uma **página** opcional: a página onde a pessoa parou ou a que fez ela pensar naquilo. Ela aparece como "p. 87" na reflexão e no carrossel do início.
-- Na página de um livro em leitura aparece o status **lendo** e o botão **"terminei a leitura"**. Ele abre uma janelinha (pop-up) com o camaleão pedindo a **reflexão final** do livro, com perguntas próprias ("o que esse livro te ensinou, do começo ao fim?").
-  - A reflexão final é opcional: dá para "concluir sem reflexão" e escrever depois. Cancelar ou apertar Esc não conclui a leitura.
-  - Ao concluir, o livro passa a **lido em <data>**, e a reflexão final fica destacada na lista.
-- Na edição do livro dá para voltar para "lendo", e a data de conclusão é apagada.
+### Reading in progress and final reflection
+- **You don't need to finish a book to reflect on it.** When adding, the user picks **reading** or **read**, and can take notes while reading.
+- Every reflection accepts an optional **page**: the page where the person stopped or the one that made them think about it. It shows as "p. 87" on the reflection and in the home carousel.
+- On a book being read, the status **reading** and an **"i finished it"** button show up. It opens a small window (pop-up) with the chameleon asking for the book's **final reflection**, with its own questions ("what did this book teach you, from beginning to end?").
+  - The final reflection is optional: the person can "finish without reflection" and write it later. Cancelling or pressing Esc does not finish the reading.
+  - When finished, the book becomes **read on <date>**, and the final reflection is highlighted in the list.
+- When editing a book, it can go back to "reading", and the finish date is cleared.
 
-## 5. MVP
+## 6. MVP
 
-Escopo do MVP (por enquanto é só isso):
+MVP scope (that's all for now):
 
-1. Cadastro e login de usuário
-2. Header novo (sem carrinho, com mais botões)
-3. Adicionar livro (só o título é obrigatório; demais campos opcionais)
-4. Biblioteca com visual de prateleira (com busca por título e filtros de gênero e tags)
-5. Tela inicial personalizada com a reflexão fixada
+1. User sign-up and login
+2. New header (no cart, more buttons)
+3. Add book (only the title is required; the other fields are optional)
+4. Library with a shelf look (with title search and genre, tag and status filters)
+5. Customized home page with the pinned reflection
 
-Tudo que estiver fora dessa lista fica para depois — não implementar sem pedido explícito.
+Anything outside this list comes later — do not implement it without an explicit request.
 
-## 6. Stack técnica
+## 7. Tech stack
 
-| Pasta       | Stack                                                              |
-|-------------|--------------------------------------------------------------------|
-| `backend/`  | Java 21, Spring Boot 4.1, Spring Data JPA, MySQL, Flyway, Actuator |
-| `frontend/` | React + Vite + TypeScript                                          |
+| Folder      | Stack                                                                    |
+|-------------|--------------------------------------------------------------------------|
+| `backend/`  | Java 21, Spring Boot 4.1, Spring Data JPA, MySQL, Flyway, Actuator, Lombok |
+| `frontend/` | React + Vite + TypeScript, React Router, own i18n (no extra libraries)   |
 
-- O schema do banco é versionado pelo Flyway (`backend/src/main/resources/db/migration`); o Hibernate fica em `validate`.
-- O Vite encaminha `/api/*` para o backend em `localhost:8080`.
+- The database schema is versioned with Flyway (`backend/src/main/resources/db/migration`); Hibernate runs in `validate` mode.
+- Never edit a migration that may already have been applied (Flyway checks their checksum); create a new one instead.
+- Vite forwards `/api/*` to the backend at `localhost:8080`.
 
-### Modelo de dados (rascunho)
-- **Usuário**: nome, email, senha (hash).
-- **Livro**: pertence a um usuário.
-  - Obrigatórios: título, data de cadastro (automática).
-  - Opcionais (nullable): capa (URL ou upload), autor, resumo, número de páginas, gênero, estrelas (1–5).
-  - Tags: relação muitos-para-muitos (um livro tem várias tags; tags pertencem ao usuário).
-- **Reflexão**: pertence a um livro; texto, data, página (opcional) e se é a reflexão final.
-- **Leitura do livro**: status `lendo`/`lido` (livros sem status contam como lidos) e data de conclusão.
-- **Reflexão fixada na home**: referência a uma reflexão existente **ou** um texto livre escrito só para o início.
+### Data model (draft)
+- **User**: name, email, password (hash).
+- **Book**: belongs to a user.
+  - Required: title, date added (automatic).
+  - Optional (nullable): cover (URL or upload), author, summary, page count, genre, stars (1–5).
+  - Tags: many-to-many relationship (a book has several tags; tags belong to the user).
+- **Reflection**: belongs to a book; text, date, page (optional) and whether it is the final reflection.
+- **Book reading**: status `reading`/`read` (books without a status count as read) and finish date.
+- **Reflection pinned to home**: a reference to an existing reflection **or** a free text written just for the home page.
 
-## 7. Regras para a IA
+## 8. Rules for the AI
 
-- Sempre seguir este plano; se um pedido contrariar o plano, avisar antes de fazer.
-- Nunca reintroduzir elementos de loja (carrinho, preço, promoção).
-- Nunca usar o nome "ajuda.me".
-- Respeitar a paleta, o camaleão, as plantas e o estilo arredondado, fofo, minimalista e flat.
-- Textos da interface em português, em minúsculas e com tom acolhedor.
+- Always follow this plan; if a request goes against the plan, say so before doing it.
+- Never bring back store elements (cart, price, promotion).
+- Never use the name "ajuda.me".
+- Respect the palette, the chameleon, the plants and the rounded, cute, minimalist and flat style.
+- Code, comments, file names, commits and docs in English.
+- UI text only through the i18n files, always in the three languages, lowercase and warm.

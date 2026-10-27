@@ -14,7 +14,7 @@ public class HelloController {
     @GetMapping("/hello")
     public Map<String, Object> hello() {
         return Map.of(
-                "message", "Olá do Spring Boot!",
+                "message", "Hello from Spring Boot!",
                 "timestamp", Instant.now().toString());
     }
 }

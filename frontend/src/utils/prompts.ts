@@ -1,42 +1,34 @@
-// Perguntas que ajudam a escrever uma reflexão. A ideia do projeto é que todo livro
-// tem um aprendizado, inclusive os de ficção, então as perguntas mudam com o gênero.
+// Questions that help writing a reflection. The project's idea is that every book has a lesson,
+// fiction included, so the questions change with the genre the person typed.
+import type { Messages } from '../i18n/messages.en'
 
-const LEARNED = 'escreva aqui o que você aprendeu.'
-
-const FICTION_PROMPTS = [
-  'qual personagem te ensinou alguma coisa?',
-  'teve alguma cena que mudou seu jeito de ver algo?',
-  'o que você faria no lugar de alguém dessa história?',
-  'com qual personagem você mais se identificou? por quê?',
-  'o que essa história fala sobre a vida real?',
+// genre words in English, Portuguese and Spanish (without accents).
+// "non-fiction" is checked first because it also contains the word "fiction".
+const NONFICTION_WORDS = [
+  'non-fiction', 'nonfiction', 'nao ficcao', 'no ficcion',
+  'self-help', 'autoajuda', 'auto ajuda', 'autoayuda',
+  'psycholog', 'psicolog', 'philosoph', 'filosof',
+  'personal growth', 'desenvolvimento', 'desarrollo',
+  'finance', 'financas', 'finanzas', 'business', 'negocios',
+  'biograph', 'biografia', 'history', 'historia', 'science', 'ciencia',
+  'spiritual', 'espiritualidad', 'essay', 'ensaio', 'ensayo', 'health', 'saude', 'salud',
 ]
-
-const NONFICTION_PROMPTS = [
-  'qual ideia você quer levar pra vida?',
-  'o que você vai fazer diferente depois dessa leitura?',
-  'com o que você concordou? e do que discordou?',
-  'qual parte você queria ter lido antes?',
+const FICTION_WORDS = [
+  'fiction', 'ficcao', 'ficcion', 'novel', 'novela', 'romance',
+  'fantasy', 'fantasia', 'fable', 'fabula', 'tale', 'conto', 'cuento',
+  'poetry', 'poesia', 'chronicle', 'cronica', 'thriller', 'suspense', 'suspenso',
+  'horror', 'terror', 'mystery', 'misterio', 'adventure', 'aventura',
+  'dystopia', 'distopia', 'literature', 'literatura', 'drama', 'comics', 'hq', 'manga', 'young adult', 'juvenil',
 ]
-
-const GENERAL_PROMPTS = [
-  LEARNED,
-  'que frase ou momento ficou com você?',
-  'o que esse livro deixou em você?',
-  'se fosse contar esse livro pra um amigo, o que diria que aprendeu?',
-]
-
-// "não ficção" é checado antes, porque também contém a palavra "ficção"
-const NONFICTION_WORDS = ['nao ficcao', 'autoajuda', 'auto ajuda', 'psicologia', 'filosofia', 'desenvolvimento', 'financas', 'biografia', 'historia', 'ciencia', 'espiritualidade', 'negocios', 'ensaio']
-const FICTION_WORDS = ['ficcao', 'romance', 'fantasia', 'fabula', 'conto', 'poesia', 'cronica', 'suspense', 'terror', 'misterio', 'aventura', 'distopia', 'literatura', 'drama', 'hq', 'manga']
 
 function normalize(text: string) {
   return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase()
 }
 
-/** Perguntas para um livro: as do gênero dele (mais o convite geral) ou, sem gênero conhecido, as gerais. */
-export function promptsFor(genre?: string): string[] {
+/** Prompts for a book: its genre's ones (plus the general invite) or, for an unknown genre, the general ones. */
+export function promptsFor(t: Messages, genre?: string): string[] {
   const g = normalize(genre ?? '')
-  if (g && NONFICTION_WORDS.some((w) => g.includes(w))) return [...NONFICTION_PROMPTS, LEARNED]
-  if (g && FICTION_WORDS.some((w) => g.includes(w))) return [...FICTION_PROMPTS, LEARNED]
-  return GENERAL_PROMPTS
+  if (g && NONFICTION_WORDS.some((w) => g.includes(w))) return [...t.prompts.nonFiction, t.prompts.learned]
+  if (g && FICTION_WORDS.some((w) => g.includes(w))) return [...t.prompts.fiction, t.prompts.learned]
+  return t.prompts.general
 }

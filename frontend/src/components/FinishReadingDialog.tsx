@@ -1,26 +1,27 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import camaleao from '../assets/camaleao.png'
-import { FINAL_PROMPTS } from '../utils/reading'
+import chameleon from '../assets/chameleon.png'
+import { errorText, useI18n } from '../i18n/context'
 import { ReflectionField } from './ReflectionField'
 import './FinishReadingDialog.css'
 
 type Props = {
   open: boolean
   bookTitle: string
-  /** conclui a leitura; o texto vem vazio se a pessoa preferir escrever depois */
+  /** finishes the reading; the text is empty if the person prefers to write later */
   onConfirm: (finalReflection: string) => Promise<void>
   onClose: () => void
 }
 
-/** Janela que aparece ao concluir uma leitura, pedindo a reflexão final do livro. */
+/** Window shown when finishing a book, asking for the book's final reflection. */
 export function FinishReadingDialog({ open, bookTitle, onConfirm, onClose }: Props) {
+  const { t } = useI18n()
   const ref = useRef<HTMLDialogElement>(null)
   const titleId = useId()
   const [text, setText] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
-  // <dialog> nativo: showModal cuida do fundo escuro, do foco e do Esc
+  // native <dialog>: showModal takes care of the backdrop, focus and Esc
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
@@ -41,7 +42,7 @@ export function FinishReadingDialog({ open, bookTitle, onConfirm, onClose }: Pro
       setText('')
       setError('')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'algo deu errado, tente de novo.')
+      setError(errorText(err, t))
     } finally {
       setBusy(false)
     }
@@ -53,26 +54,29 @@ export function FinishReadingDialog({ open, bookTitle, onConfirm, onClose }: Pro
       className="finish-dialog"
       aria-labelledby={titleId}
       onClose={close}
-      // clique no fundo escuro (fora da caixa) fecha
+      // a click on the dark backdrop (outside the box) closes it
       onClick={(e) => e.target === e.currentTarget && close()}
     >
       <div className="finish-dialog__box">
-        <img src={camaleao} alt="" className="finish-dialog__mascot" />
-        <h2 id={titleId}>terminou! que bom ✿</h2>
+        <img src={chameleon} alt="" className="finish-dialog__mascot" />
+        <h2 id={titleId}>{t.finish.title}</h2>
         <p>
-          antes de voltar pra estante: qual é a sua <strong>reflexão final</strong> sobre <em>{bookTitle}</em>?
+          {t.finish.askBefore}
+          <strong>{t.finish.askStrong}</strong>
+          {t.finish.askAfter}
+          <em>{bookTitle}</em>?
         </p>
 
-        {open && <ReflectionField value={text} onChange={setText} prompts={FINAL_PROMPTS} autoFocus />}
-        <p className="finish-dialog__hint">se preferir, dá pra escrever depois.</p>
+        {open && <ReflectionField value={text} onChange={setText} prompts={t.prompts.final} autoFocus />}
+        <p className="finish-dialog__hint">{t.finish.hint}</p>
         {error && <p className="form-error">{error}</p>}
 
         <div className="finish-dialog__actions">
           <button type="button" className="btn btn--ghost" onClick={close}>
-            cancelar
+            {t.common.cancel}
           </button>
           <button type="button" className="btn btn--primary" onClick={confirm} disabled={busy}>
-            {text.trim() ? 'guardar e concluir' : 'concluir sem reflexão'}
+            {text.trim() ? t.finish.saveAndFinish : t.finish.finishWithout}
           </button>
         </div>
       </div>

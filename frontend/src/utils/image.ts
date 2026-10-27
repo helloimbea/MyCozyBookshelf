@@ -1,4 +1,4 @@
-/** Reduz a imagem enviada como capa para não estourar o armazenamento do navegador. */
+/** Shrinks an uploaded cover image so it doesn't fill up the browser storage. */
 export async function fileToCoverDataUrl(file: File, maxWidth = 480): Promise<string> {
   const bitmap = await createImageBitmap(file)
   const scale = Math.min(1, maxWidth / bitmap.width)
@@ -8,8 +8,4 @@ export async function fileToCoverDataUrl(file: File, maxWidth = 480): Promise<st
   canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
   bitmap.close()
   return canvas.toDataURL('image/jpeg', 0.85)
-}
-
-export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })
 }

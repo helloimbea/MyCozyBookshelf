@@ -1,4 +1,4 @@
-﻿.shelf-page {
+.shelf-page {
   max-width: 1080px;
 }
 
@@ -10,7 +10,7 @@
   opacity: 0.85;
 }
 
-/* altura mínima = espaço do vasinho, que fica à esquerda apoiado na estante */
+/* min height = room for the little pot, which sits on the left on top of the bookcase */
 .shelf-top {
   display: flex;
   justify-content: flex-end;
@@ -45,7 +45,7 @@
   box-shadow: var(--shadow-soft);
 }
 
-/* vasinho em cima da estante */
+/* little pot on top of the bookcase */
 .bookcase__plant {
   width: 110px;
   left: 48px;
@@ -113,7 +113,7 @@
 }
 
 @media (max-width: 720px) {
-  /* no celular a busca ocupa a largura toda e o vasinho ganha espaço próprio */
+  /* on mobile the search takes the full width and the pot gets its own space */
   .shelf-top {
     min-height: 0;
     margin-bottom: 100px;
@@ -139,7 +139,7 @@
   }
 }
 
-/* fitinha de marcador nos livros que estão sendo lidos */
+/* bookmark ribbon on books being read */
 .shelf-book__ribbon {
   position: absolute;
   top: -6px;

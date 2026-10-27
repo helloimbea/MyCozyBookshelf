@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react'
-import camaleao from '../assets/camaleao.png'
+import chameleon from '../assets/chameleon.png'
 import './auth.css'
 
-/** Layout das telas de login e cadastro: camaleão grande à esquerda, card com moldura marrom à direita. */
+/** Layout of the login and sign-up screens: big chameleon on the left, brown-framed card on the right. */
 export function AuthLayout({ title, greeting, children }: { title: string; greeting: string; children: ReactNode }) {
   return (
     <section className="auth">
-      <img src={camaleao} alt="" className="auth__mascot" />
+      <img src={chameleon} alt="" className="auth__mascot" />
       <div className="auth-card">
         <p className="auth-card__brand">my cozy bookshelf</p>
         <h1>{title}</h1>

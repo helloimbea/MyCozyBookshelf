@@ -1,8 +1,8 @@
-﻿export type User = {
+export type User = {
   id: string
   name: string
   email: string
-  /** conta da estante de demonstração */
+  /** account of the demo shelf */
   demo?: boolean
 }
 
@@ -10,19 +10,19 @@ export type Reflection = {
   id: string
   text: string
   createdAt: string
-  /** página onde a pessoa parou ou que fez ela pensar nisso */
+  /** page where the person stopped, or the one that made them think about this */
   page?: number
-  /** reflexão escrita ao terminar o livro */
+  /** reflection written when finishing the book */
   final?: boolean
 }
 
-/** O que a pessoa escreve ao guardar uma reflexão. */
+/** What the person writes when saving a reflection. */
 export type NewReflection = {
   text: string
   page?: number
 }
 
-/** "lendo" ou "lido". Livros antigos, sem status, contam como lidos. */
+/** "reading" or "read". Older books without a status count as read. */
 export type ReadingStatus = 'reading' | 'read'
 
 export type Book = {
@@ -37,13 +37,13 @@ export type Book = {
   tags: string[]
   stars?: number
   status?: ReadingStatus
-  /** quando a leitura foi marcada como concluída */
+  /** when the reading was marked as finished */
   finishedAt?: string
   reflections: Reflection[]
   createdAt: string
 }
 
-/** Campos que o usuário preenche no formulário (só o título é obrigatório). */
+/** Fields the user fills in the form (only the title is required). */
 export type BookInput = {
   title: string
   coverUrl?: string
@@ -56,7 +56,7 @@ export type BookInput = {
   status?: ReadingStatus
 }
 
-/** O que fica fixado na tela inicial: uma reflexão de um livro ou um texto livre. */
+/** What is pinned to the home page: a reflection from a book or a free text. */
 export type PinnedReflection =
   | { kind: 'reflection'; bookId: string; reflectionId: string }
   | { kind: 'custom'; text: string }
