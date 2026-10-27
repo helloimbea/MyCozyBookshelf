@@ -80,6 +80,7 @@
 }
 
 .shelf-book {
+  position: relative;
   width: var(--book-w);
   text-decoration: none;
   flex: none;
@@ -136,4 +137,16 @@
     width: 80px;
     left: 24px;
   }
+}
+
+/* fitinha de marcador nos livros que estão sendo lidos */
+.shelf-book__ribbon {
+  position: absolute;
+  top: -6px;
+  right: 14%;
+  width: 14%;
+  height: 26%;
+  background: var(--ribbon);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  pointer-events: none;
 }

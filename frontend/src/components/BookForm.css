@@ -90,3 +90,7 @@
     align-items: stretch;
   }
 }
+
+.book-form__status {
+  width: min(240px, 100%);
+}

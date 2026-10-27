@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router'
+﻿import { useNavigate } from 'react-router'
 import plantar from '../assets/plantar.png'
 import { BookForm } from '../components/BookForm'
 import * as api from '../services/api'
@@ -18,6 +18,7 @@ export function AddBook() {
       <div className="card">
         <BookForm
           withReflection
+          withSearch
           submitLabel="colocar na estante"
           onSubmit={async (input, reflection) => {
             const book = await api.createBook(input, reflection)

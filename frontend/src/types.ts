@@ -10,7 +10,20 @@ export type Reflection = {
   id: string
   text: string
   createdAt: string
+  /** página onde a pessoa parou ou que fez ela pensar nisso */
+  page?: number
+  /** reflexão escrita ao terminar o livro */
+  final?: boolean
 }
+
+/** O que a pessoa escreve ao guardar uma reflexão. */
+export type NewReflection = {
+  text: string
+  page?: number
+}
+
+/** "lendo" ou "lido". Livros antigos, sem status, contam como lidos. */
+export type ReadingStatus = 'reading' | 'read'
 
 export type Book = {
   id: string
@@ -23,6 +36,9 @@ export type Book = {
   genre?: string
   tags: string[]
   stars?: number
+  status?: ReadingStatus
+  /** quando a leitura foi marcada como concluída */
+  finishedAt?: string
   reflections: Reflection[]
   createdAt: string
 }
@@ -37,6 +53,7 @@ export type BookInput = {
   genre?: string
   tags: string[]
   stars?: number
+  status?: ReadingStatus
 }
 
 /** O que fica fixado na tela inicial: uma reflexão de um livro ou um texto livre. */

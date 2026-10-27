@@ -6,6 +6,7 @@ import plantar2 from '../assets/plantar2.png'
 import { useAuth } from '../auth/context'
 import { BookCover } from '../components/BookCover'
 import { DemoButton } from '../components/DemoButton'
+import { ReflectionCarousel } from '../components/ReflectionCarousel'
 import * as api from '../services/api'
 import type { Book, PinnedReflection, PinnedView } from '../types'
 import './home.css'
@@ -35,9 +36,12 @@ function Welcome() {
   return (
     <div className="home-card home-card--welcome">
       <img src={plantar2} alt="" className="plant home-card__pot" />
-      <img src={camaleao} alt="" className="home-card__mascot" />
-      <h1>um cantinho pra guardar os livros que você leu</h1>
-      <p>e tudo o que eles deixaram em você.</p>
+      <figure className="home-mascot">
+        <img src={camaleao} alt="" className="home-card__mascot" />
+        <figcaption>o camaleão pega um pouquinho da cor de cada livro que lê.</figcaption>
+      </figure>
+      <h1>todo livro tem um aprendizado</h1>
+      <p>um cantinho pra guardar os livros que você leu e tudo o que eles deixaram em você.</p>
       <div className="home-card__actions">
         <Link to="/cadastro" className="btn btn--primary">
           criar minha estante
@@ -77,49 +81,59 @@ function PinnedCard() {
 
   if (pinned === undefined) return <div className="home-card" />
 
-  return (
-    <div className="home-card">
-      <img src={plantar2} alt="" className="plant home-card__pot" />
+  // lembranças: todas as reflexões menos a fixada, das mais novas para as mais antigas
+  const pinnedId = pinned?.pinned.kind === 'reflection' ? pinned.pinned.reflectionId : undefined
+  const memories = books
+    .flatMap((book) => book.reflections.map((reflection) => ({ book, reflection })))
+    .filter(({ reflection }) => reflection.id !== pinnedId)
+    .sort((a, b) => b.reflection.createdAt.localeCompare(a.reflection.createdAt))
 
-      {editing ? (
-        <PinEditor books={books} current={pinned?.pinned} onSave={save} onCancel={() => setEditing(false)} />
-      ) : pinned ? (
-        <figure className="pinned">
-          <span className="chip">reflexão fixada</span>
-          <blockquote className="pinned__text">{pinned.text}</blockquote>
-          <figcaption className="pinned__source">
-            {pinned.book ? (
-              <Link to={`/livro/${pinned.book.id}`} className="pinned__book">
-                <BookCover title={pinned.book.title} author={pinned.book.author} coverUrl={pinned.book.coverUrl} className="pinned__cover" />
-                <span>
-                  <strong>{pinned.book.title}</strong>
-                  {pinned.book.author && <span>{pinned.book.author}</span>}
-                </span>
-              </Link>
-            ) : (
-              <span className="pinned__own">escrita por você</span>
-            )}
-          </figcaption>
-          <div className="home-card__actions">
-            <button type="button" className="btn btn--soft btn--small" onClick={() => setEditing(true)}>
-              trocar reflexão
-            </button>
-            <button type="button" className="btn btn--ghost btn--small" onClick={() => save(null)}>
-              desafixar
+  return (
+    <>
+      <div className="home-card">
+        <img src={plantar2} alt="" className="plant home-card__pot" />
+
+        {editing ? (
+          <PinEditor books={books} current={pinned?.pinned} onSave={save} onCancel={() => setEditing(false)} />
+        ) : pinned ? (
+          <figure className="pinned">
+            <span className="chip">reflexão fixada</span>
+            <blockquote className="pinned__text">{pinned.text}</blockquote>
+            <figcaption className="pinned__source">
+              {pinned.book ? (
+                <Link to={`/livro/${pinned.book.id}`} className="pinned__book">
+                  <BookCover title={pinned.book.title} author={pinned.book.author} coverUrl={pinned.book.coverUrl} className="pinned__cover" />
+                  <span>
+                    <strong>{pinned.book.title}</strong>
+                    {pinned.book.author && <span>{pinned.book.author}</span>}
+                  </span>
+                </Link>
+              ) : (
+                <span className="pinned__own">escrita por você</span>
+              )}
+            </figcaption>
+            <div className="home-card__actions">
+              <button type="button" className="btn btn--soft btn--small" onClick={() => setEditing(true)}>
+                trocar reflexão
+              </button>
+              <button type="button" className="btn btn--ghost btn--small" onClick={() => save(null)}>
+                desafixar
+              </button>
+            </div>
+          </figure>
+        ) : (
+          <div className="home-empty">
+            <img src={camaleao} alt="" className="home-card__mascot" />
+            <h2>fixe aqui uma reflexão que te acompanha</h2>
+            <p>escolha uma das suas reflexões ou escreva uma nova, só pra este cantinho.</p>
+            <button type="button" className="btn btn--primary" onClick={() => setEditing(true)}>
+              escolher reflexão
             </button>
           </div>
-        </figure>
-      ) : (
-        <div className="home-empty">
-          <img src={camaleao} alt="" className="home-card__mascot" />
-          <h2>fixe aqui uma reflexão que te acompanha</h2>
-          <p>escolha uma das suas reflexões ou escreva uma nova, só pra este cantinho.</p>
-          <button type="button" className="btn btn--primary" onClick={() => setEditing(true)}>
-            escolher reflexão
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      <ReflectionCarousel items={memories} />
+    </>
   )
 }
 

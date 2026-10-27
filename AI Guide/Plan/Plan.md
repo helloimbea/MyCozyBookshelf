@@ -1,4 +1,4 @@
-# My Cozy Bookshelf — Plano do Projeto
+﻿# My Cozy Bookshelf — Plano do Projeto
 
 > Este documento é a fonte de verdade do projeto. Antes de implementar qualquer coisa,
 > a IA deve ler este plano e seguir as decisões aqui descritas. Em caso de dúvida
@@ -68,6 +68,22 @@ O azul menta, o verde e o marrom são obrigatórios.
 - Fonte **Quicksand** (Google Fonts) — ver `AI Guide/Assets/font.css`.
 - Textos em minúsculas e com tom carinhoso, como no original ("oi amigo, que bom ter você de volta!").
 
+### Voz do projeto: todo livro tem um aprendizado
+A ideia central da identidade é que **todo livro ensina alguma coisa**, não só os de autoajuda ou psicologia.
+O site deve inspirar o usuário a buscar aprendizado também em romances, fantasias, clássicos etc.
+
+Frases-guia (usar com moderação, em poucos lugares escolhidos, nunca em toda tela):
+- **"todo livro tem um aprendizado"**: título do início para quem não está logado e mensagem da estante vazia
+- **"temos algo a aprender com todos os livros"**: frase do rodapé
+- **"escreva aqui o que você aprendeu"**: subtítulo da seção de reflexões do livro
+- **"não precisa terminar o livro pra refletir"**: dica ao marcar um livro como *lendo* e na página de um livro em leitura
+
+Onde a ideia aparece na prática:
+- **Perguntas de inspiração no campo de reflexão** (`frontend/src/utils/prompts.ts`): mudam conforme o gênero do livro (ficção, não ficção ou geral) e o botão **"me dá uma ideia"** sorteia outra. Ex.: para ficção, "qual personagem te ensinou alguma coisa?".
+- **Estados vazios**: estante vazia e livro sem reflexão convidam a pensar no que o livro ensinou.
+- **O camaleão**: ele muda de cor conforme o lugar e "pega um pouquinho da cor de cada livro que lê", ou seja, cada livro deixa algo nele. Essa frase aparece com o mascote no início.
+- **Modo demonstração**: os livros de ficção mostram reflexões com aprendizados, não só sentimentos.
+
 ### Estilo
 - **Tudo arredondado e fofo** (cantos bem arredondados em cards, botões, inputs, livros).
 - **Simples e minimalista**, sem excessos, sem elementos sobrando.
@@ -90,6 +106,11 @@ As referências visuais do projeto original estão em `AI Guide/References/`
   - escolher uma das suas reflexões já escritas como favorita, **ou**
   - escrever uma reflexão nova só para fixar ali.
 - Manter o clima do original: fundo claro, plantas decorativas, card central arredondado.
+- A reflexão fixada é o **card principal** do início. Logo abaixo, menor, fica o carrossel **"lembranças da estante"**:
+  - mostra as outras reflexões do usuário (nunca a fixada), das mais novas para as mais antigas, com a capa e o título do livro; clicar abre o livro;
+  - troca sozinho devagar (a cada ~8 s, com fade suave) e pausa com o mouse em cima, com foco do teclado ou quando o sistema pede "reduzir movimento";
+  - tem setinhas e bolinhas para navegar (acima de 8 reflexões, um contador "3 / 17" no lugar das bolinhas);
+  - só aparece quando há 2 ou mais reflexões para mostrar.
 
 ### Login
 - **Quase igual ao original** (`login.png`): camaleão grande à esquerda, card com moldura marrom à direita.
@@ -102,6 +123,10 @@ As referências visuais do projeto original estão em `AI Guide/References/`
 ### Adicionar livro
 - Formulário para cadastrar um livro que o usuário leu.
 - O cadastro deve ser rápido: só o obrigatório precisa ser preenchido na hora. Os campos opcionais podem ser preenchidos no cadastro ou adicionados/editados depois.
+- **Busca automática de livros**: enquanto o usuário digita o título, aparecem sugestões ("é algum desses?"). Escolher uma preenche título, autor, capa, número de páginas e gênero (traduzido para português). O resumo **não** é preenchido, porque ele deve ser escrito com as palavras do usuário.
+  - Fonte: **Google Books** primeiro; se falhar ou não achar nada, **Open Library** (`frontend/src/services/bookSearch.ts`).
+  - Chave opcional do Google em `VITE_GOOGLE_BOOKS_API_KEY` (`frontend/.env.local`, ver `.env.example`). Sem chave funciona, mas o Google divide a cota por IP.
+  - A busca é só uma ajuda: dá para ignorar e preencher tudo à mão.
 
 | Campo             | Obrigatório no cadastro? | Observação                                       |
 |-------------------|--------------------------|--------------------------------------------------|
@@ -114,6 +139,7 @@ As referências visuais do projeto original estão em `AI Guide/References/`
 | Gênero            | não                      |                                                  |
 | Tags              | não                      | várias por livro, criadas livremente             |
 | Estrelas          | não                      | avaliação de 1 a 5                               |
+| Leitura           | já vem marcado "lido"    | "lendo" ou "lido", sempre visível no formulário |
 
 **Capa placeholder:** quando o livro não tem capa, o site mostra uma capa padrão fofinha
 no estilo do projeto (flat, arredondada, nas cores da paleta, com um detalhe como o camaleão
@@ -124,6 +150,15 @@ banco a capa fica vazia. Assim que o usuário adicionar uma capa, ela substitui 
 - Mostra todos os livros cadastrados pelo usuário **como se estivessem numa prateleira real** (livros lado a lado em prateleiras de madeira, no estilo fofo/flat do site).
 - O usuário pode **procurar livros pelo título** e **filtrar por gênero ou por tags** (sem diferenciar maiúsculas nem acentos). Só os livros encontrados ficam na prateleira.
 - Ao clicar em um livro, o usuário consegue ver/editar as reflexões daquele livro e completar ou editar os campos opcionais (autor, resumo, páginas, gênero, tags, estrelas).
+- Livros que estão sendo lidos têm uma **fitinha de marcador** na capa, e o filtro da estante também tem **leitura: lendo / lido**. O cabeçalho mostra quantos estão "lendo agora".
+
+### Leitura em andamento e reflexão final
+- **Não é preciso terminar o livro para refletir.** Ao cadastrar, o usuário escolhe **lendo** ou **lido**, e pode ir anotando reflexões enquanto lê.
+- Toda reflexão aceita uma **página** opcional: a página onde a pessoa parou ou a que fez ela pensar naquilo. Ela aparece como "p. 87" na reflexão e no carrossel do início.
+- Na página de um livro em leitura aparece o status **lendo** e o botão **"terminei a leitura"**. Ele abre uma janelinha (pop-up) com o camaleão pedindo a **reflexão final** do livro, com perguntas próprias ("o que esse livro te ensinou, do começo ao fim?").
+  - A reflexão final é opcional: dá para "concluir sem reflexão" e escrever depois. Cancelar ou apertar Esc não conclui a leitura.
+  - Ao concluir, o livro passa a **lido em <data>**, e a reflexão final fica destacada na lista.
+- Na edição do livro dá para voltar para "lendo", e a data de conclusão é apagada.
 
 ## 5. MVP
 
@@ -153,7 +188,8 @@ Tudo que estiver fora dessa lista fica para depois — não implementar sem pedi
   - Obrigatórios: título, data de cadastro (automática).
   - Opcionais (nullable): capa (URL ou upload), autor, resumo, número de páginas, gênero, estrelas (1–5).
   - Tags: relação muitos-para-muitos (um livro tem várias tags; tags pertencem ao usuário).
-- **Reflexão**: pertence a um livro; texto, data.
+- **Reflexão**: pertence a um livro; texto, data, página (opcional) e se é a reflexão final.
+- **Leitura do livro**: status `lendo`/`lido` (livros sem status contam como lidos) e data de conclusão.
 - **Reflexão fixada na home**: referência a uma reflexão existente **ou** um texto livre escrito só para o início.
 
 ## 7. Regras para a IA

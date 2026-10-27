@@ -6,6 +6,7 @@ import { BookCover } from '../components/BookCover'
 import { ShelfFilters, type Filters } from '../components/ShelfFilters'
 import * as api from '../services/api'
 import type { Book } from '../types'
+import { isReading } from '../utils/reading'
 import './shelf.css'
 
 const MIN_SHELVES = 3
@@ -50,12 +51,19 @@ export function Shelf() {
 
   // filtros ficam na URL para continuarem lá ao voltar da página de um livro
   const [params, setParams] = useSearchParams()
-  const filters: Filters = { query: params.get('q') ?? '', genre: params.get('genero') ?? '', tags: params.getAll('tag') }
+  const statusParam = params.get('leitura')
+  const filters: Filters = {
+    query: params.get('q') ?? '',
+    genre: params.get('genero') ?? '',
+    tags: params.getAll('tag'),
+    status: statusParam === 'lendo' ? 'reading' : statusParam === 'lido' ? 'read' : '',
+  }
 
   function setFilters(next: Filters) {
     const p = new URLSearchParams()
     if (next.query) p.set('q', next.query)
     if (next.genre) p.set('genero', next.genre)
+    if (next.status) p.set('leitura', next.status === 'reading' ? 'lendo' : 'lido')
     next.tags.forEach((t) => p.append('tag', t))
     setParams(p, { replace: true, state: null })
   }
@@ -72,8 +80,10 @@ export function Shelf() {
     (b) =>
       (!query || normalize(b.title).includes(query)) &&
       (!filters.genre || normalize(b.genre ?? '') === normalize(filters.genre)) &&
-      filters.tags.every((t) => b.tags.includes(t)),
+      filters.tags.every((t) => b.tags.includes(t)) &&
+      (!filters.status || (filters.status === 'reading') === isReading(b)),
   )
+  const readingCount = allBooks.filter(isReading).length
   const filtering = visible.length !== allBooks.length
 
   const shelves: Book[][] = []
@@ -91,9 +101,7 @@ export function Shelf() {
             <p>
               {filtering
                 ? `${visible.length} de ${allBooks.length} livros`
-                : allBooks.length === 1
-                  ? '1 livro lido'
-                  : `${allBooks.length} livros lidos`}
+                : `${allBooks.length} ${allBooks.length === 1 ? 'livro' : 'livros'}${readingCount ? ` · ${readingCount} lendo agora` : ''}`}
             </p>
           )}
         </div>
@@ -104,7 +112,7 @@ export function Shelf() {
 
       {/* faixa acima da estante: vasinho à esquerda, busca e filtros à direita */}
       <div className="shelf-top">
-        {allBooks.length > 0 && <ShelfFilters filters={filters} genres={genres} tags={tags} onChange={setFilters} />}
+        {allBooks.length > 0 && <ShelfFilters filters={filters} genres={genres} tags={tags} showStatus={readingCount > 0} onChange={setFilters} />}
       </div>
 
       <div className="bookcase" style={{ '--book-w': `${bookWidth}px`, '--gap': `${GAP}px` } as CSSProperties}>
@@ -115,9 +123,9 @@ export function Shelf() {
               <div className="bookcase__books">
                 {i === 0 && books?.length === 0 && (
                   <p className="shelf-empty">
-                    sua estante ainda está vazia.
+                    todo livro tem um aprendizado.
                     <br />
-                    que tal colocar aqui o último livro que você leu?
+                    qual foi o último que você leu?
                   </p>
                 )}
                 {i === 0 && allBooks.length > 0 && visible.length === 0 && (
@@ -129,9 +137,11 @@ export function Shelf() {
                     to={`/livro/${book.id}`}
                     state={{ fromShelf: true }}
                     className={book.id === highlight ? 'shelf-book is-new' : 'shelf-book'}
-                    title={book.author ? `${book.title} — ${book.author}` : book.title}
+                    title={[book.title, book.author, isReading(book) && '(lendo)'].filter(Boolean).join(' — ')}
                   >
                     <BookCover title={book.title} author={book.author} coverUrl={book.coverUrl} />
+                    {/* fitinha marcando onde a leitura parou */}
+                    {isReading(book) && <span className="shelf-book__ribbon" role="img" aria-label="lendo" />}
                   </Link>
                 ))}
               </div>

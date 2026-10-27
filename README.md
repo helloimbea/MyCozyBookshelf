@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="AI%20Guide/Assets/camaleao.png" alt="camaleão do my cozy bookshelf" width="140" />
 </p>
 
@@ -25,6 +25,14 @@ O **my cozy bookshelf** é uma estante particular. Cada pessoa guarda nela os li
 
 Ninguém vende nada nem fica de olho no que você lê. A estante é só sua.
 
+### todo livro tem um aprendizado 🌱
+
+Essa é a ideia que guia o projeto. Não são só os livros de autoajuda ou de psicologia que ensinam: um romance, uma fantasia ou um clássico também deixam alguma coisa na gente. Às vezes é um personagem, às vezes uma cena, às vezes um jeito novo de olhar pra vida.
+
+Por isso, quando você vai escrever uma reflexão, o site sugere perguntas que combinam com o livro. Para um livro de ficção pode aparecer *"qual personagem te ensinou alguma coisa?"*, e se nada vier à cabeça, o botão **me dá uma ideia** sorteia outra.
+
+E o camaleão? Ele muda de cor conforme o lugar onde está. Aqui, ele **pega um pouquinho da cor de cada livro que lê**, porque temos algo a aprender com todos os livros. 🦎
+
 > O projeto nasceu como o **ajuda.me**, uma lojinha de livros de autoajuda feita em HTML e JavaScript puro.
 > Ele cresceu, mudou de ideia e virou outra coisa. Agora é um projeto fullstack em **Spring Boot + React**,
 > e o camaleão veio junto. 🦎
@@ -33,10 +41,13 @@ Ninguém vende nada nem fica de olho no que você lê. A estante é só sua.
 
 - **criar sua conta** e entrar quando quiser
 - **colocar um livro na estante**: só o título é obrigatório. Autor, capa, resumo, gênero, número de páginas, tags, estrelas e reflexão podem vir na hora ou depois, com calma
+- **achar o livro sem digitar tudo**: enquanto você escreve o título, o site procura o livro (no Google Books e no Open Library) e preenche autor, capa, páginas e gênero sozinho
 - **ver seus livros numa prateleira de verdade**, um do lado do outro, em cima das tábuas de madeira
 - **procurar na estante** pelo título e filtrar por gênero ou por tags
-- **escrever reflexões** em cada livro, quantas quiser
+- **escrever reflexões** em cada livro, quantas quiser, e dizer em qual página estava. Não precisa terminar o livro pra refletir: marque como *lendo* e vá anotando pelo caminho
+- **concluir a leitura** com um clique: o camaleão aparece pedindo a sua reflexão final sobre o livro
 - **fixar uma reflexão no início**: a tela inicial mostra a reflexão que você escolheu, ou uma que você escreveu só pra ela
+- **reencontrar o que já escreveu**: embaixo da reflexão fixada, as *lembranças da estante* vão passando devagarinho, uma reflexão de cada vez
 - **ler de noite**: tem tema claro e escuro, no botão de sol/lua do topo
 
 Livro sem capa não fica feio: o site faz uma capinha fofa com as cores da estante e o título escrito nela.
@@ -95,6 +106,8 @@ npm run dev
 ```
 
 Depois é só abrir **http://localhost:5173**, criar uma conta e começar a encher a estante.
+
+A busca de livros funciona sem configurar nada. Se quiser uma cota própria no Google Books, copie `frontend/.env.example` para `frontend/.env.local` e coloque sua chave em `VITE_GOOGLE_BOOKS_API_KEY`. Essa chave fica visível no navegador, então restrinja ela ao domínio do site no Google Cloud. Na Vercel, a mesma variável vai em *Settings → Environment Variables*.
 
 Outros comandos úteis:
 
