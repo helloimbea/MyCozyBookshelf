@@ -19,6 +19,7 @@
   --white: #fffdf9;
   --danger: #c9675e;
   --star: #e9b949;
+  --ribbon: #e07a7a; /* fitinha de marcador (cor do vasinho) */
 
   --radius-sm: 14px;
   --radius: 20px;
@@ -33,6 +34,7 @@
   --header-active: rgba(255, 255, 255, 0.6);
   --ghost-hover: rgba(117, 100, 86, 0.08);
   --soft-hover: rgba(255, 255, 255, 0.5);
+  --backdrop: rgba(78, 64, 53, 0.45); /* fundo escurecido atrás de janelas */
 
   font-family: 'Quicksand', system-ui, sans-serif;
   font-size: 16px;
@@ -68,6 +70,7 @@
   --white: #2e2824;
   --danger: #ec8f86;
   --star: #f0c75e;
+  --ribbon: #e8908a;
 
   --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
 
@@ -76,6 +79,7 @@
   --header-active: rgba(139, 245, 215, 0.22);
   --ghost-hover: rgba(236, 226, 211, 0.08);
   --soft-hover: rgba(255, 255, 255, 0.06);
+  --backdrop: rgba(0, 0, 0, 0.7);
 
   color-scheme: dark;
 }
@@ -377,7 +381,8 @@ textarea.input {
   color: var(--green-dark);
 }
 
-.segmented button[aria-selected='true'] {
+.segmented button[aria-selected='true'],
+.segmented button[aria-checked='true'] {
   background: var(--white);
   box-shadow: var(--shadow-soft);
 }

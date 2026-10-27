@@ -1,5 +1,6 @@
-// Estante de exemplo do "modo demonstração". As capas ficam em public/demo/.
+﻿// Estante de exemplo do "modo demonstração". As capas ficam em public/demo/.
 // Resumos e reflexões são textos próprios do projeto (não são trechos dos livros).
+// Os livros de ficção têm reflexões com aprendizados, não só sentimentos: todo livro ensina algo.
 
 export type DemoBook = {
   title: string
@@ -9,7 +10,10 @@ export type DemoBook = {
   tags: string[]
   stars?: number
   summary?: string
-  reflections: string[]
+  /** sem status = lido */
+  status?: 'reading'
+  /** texto simples ou com página / marcada como reflexão final */
+  reflections: (string | { text: string; page?: number; final?: boolean })[]
   /** a primeira reflexão deste livro fica fixada no início */
   pinned?: boolean
 }
@@ -24,8 +28,9 @@ export const DEMO_BOOKS: DemoBook[] = [
     stars: 5,
     summary: 'como pequenas mudanças diárias, somadas com o tempo, constroem grandes resultados.',
     reflections: [
-      'não é sobre a meta, é sobre quem eu quero me tornar, um pouquinho por dia.',
-      'comecei com 2 minutos de leitura antes de dormir. já virou meu momento favorito do dia.',
+      { text: 'não é sobre a meta, é sobre quem eu quero me tornar, um pouquinho por dia.', page: 42 },
+      { text: 'comecei com 2 minutos de leitura antes de dormir. já virou meu momento favorito do dia.', page: 160 },
+      { text: 'terminei com vontade de mudar uma coisa só de cada vez. e tudo bem ir devagar.', final: true },
     ],
   },
   {
@@ -67,7 +72,10 @@ export const DEMO_BOOKS: DemoBook[] = [
     tags: ['japão', 'amizade', 'gatos'],
     stars: 5,
     summary: 'um gato e seu dono atravessam o japão visitando velhos amigos.',
-    reflections: ['chorei no final e fiquei com vontade de abraçar todos os gatos do mundo.'],
+    reflections: [
+      { text: 'chorei nessa parte e fiquei com vontade de abraçar todos os gatos do mundo.', page: 230 },
+      { text: 'aprendi que amizade não precisa de palavras pra ser inteira. e que despedida também pode ser um jeito de amar.', final: true },
+    ],
   },
   {
     title: 'Essencialismo',
@@ -107,7 +115,11 @@ export const DEMO_BOOKS: DemoBook[] = [
     tags: ['escuta', 'comunicação'],
     stars: 4,
     summary: 'uma conversa leve e profunda sobre escutar os outros de verdade.',
-    reflections: ['escutar não é esperar a minha vez de falar.'],
+    status: 'reading',
+    reflections: [
+      { text: 'escutar não é esperar a minha vez de falar.', page: 22 },
+      { text: 'o palhaço também escuta: presta atenção no público pra saber o que fazer. achei lindo.', page: 58 },
+    ],
   },
   {
     title: 'Acolhendo Sua Criança Interior',
@@ -147,7 +159,11 @@ export const DEMO_BOOKS: DemoBook[] = [
     tags: ['relações', 'comunicação'],
     stars: 4,
     summary: 'o que a ciência diz sobre como nos conectamos e afetamos uns aos outros.',
-    reflections: [],
+    status: 'reading',
+    reflections: [
+      { text: 'a gente pega o humor das pessoas em volta sem perceber. quero escolher melhor com quem passo o dia.', page: 34 },
+      { text: 'ouvir de verdade é quase um superpoder. anotando pra praticar essa semana.', page: 87 },
+    ],
   },
   {
     title: 'O Homem Mais Rico da Babilônia',
@@ -166,7 +182,8 @@ export const DEMO_BOOKS: DemoBook[] = [
     genre: 'crônicas',
     tags: ['afeto', 'coragem'],
     stars: 4,
-    reflections: ['um livro pra ler com um café do lado e um marca-texto na mão.'],
+    status: 'reading',
+    reflections: [{ text: 'um livro pra ler com um café do lado e um marca-texto na mão.', page: 23 }],
   },
   {
     title: "Não Faça Tempestade em Copo d'Água",
@@ -186,6 +203,7 @@ export const DEMO_BOOKS: DemoBook[] = [
     tags: ['hábitos', 'mente'],
     stars: 3,
     summary: 'sobre pensamentos, emoções e a ideia de reconstruir os padrões da mente.',
+    status: 'reading',
     reflections: [],
   },
   {
@@ -196,7 +214,8 @@ export const DEMO_BOOKS: DemoBook[] = [
     tags: ['mudança'],
     stars: 3,
     summary: 'uma fábula curtinha sobre como lidamos com as mudanças.',
-    reflections: [],
+    status: 'reading',
+    reflections: [{ text: 'me reconheci no personagem que fica esperando o queijo voltar. às vezes é hora de sair do lugar.', page: 31 }],
   },
   // sem capa: mostram a capa placeholder
   {
@@ -205,7 +224,10 @@ export const DEMO_BOOKS: DemoBook[] = [
     genre: 'fábula',
     tags: ['clássico', 'amizade'],
     stars: 5,
-    reflections: ['toda vez que releio, entendo uma coisa nova.'],
+    reflections: [
+      'a raposa me ensinou que é o tempo que a gente dedica a alguém que torna essa pessoa única.',
+      'toda vez que releio, entendo uma coisa nova.',
+    ],
   },
   {
     title: 'Dom Casmurro',
@@ -213,6 +235,9 @@ export const DEMO_BOOKS: DemoBook[] = [
     genre: 'romance',
     tags: ['clássico', 'brasil'],
     stars: 4,
-    reflections: ['até hoje não sei o que pensar da capitu. e acho que essa é a graça.'],
+    reflections: [
+      'aprendi que toda história tem mais de um lado, e que quem conta também escolhe o que mostrar.',
+      'até hoje não sei o que pensar da capitu. e acho que essa é a graça.',
+    ],
   },
 ]

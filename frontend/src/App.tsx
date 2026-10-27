@@ -3,6 +3,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { DemoBanner } from './components/DemoBanner'
 import { Footer } from './components/Footer'
 import { Header } from './components/Header'
+import { ScrollToTop } from './components/ScrollToTop'
 import { AddBook } from './pages/AddBook'
 import { BookDetail } from './pages/BookDetail'
 import { Home } from './pages/Home'
@@ -13,6 +14,7 @@ import { Signup } from './pages/Signup'
 export default function App() {
   return (
     <>
+      <ScrollToTop />
       <Header />
       <DemoBanner />
       <main>

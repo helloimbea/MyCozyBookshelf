@@ -1,0 +1,79 @@
+﻿.finish-dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  color: var(--brown-text);
+  outline: 2px solid var(--mint-light);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+.finish-dialog[open] {
+  animation: finish-pop 0.25s ease-out;
+}
+
+.finish-dialog::backdrop {
+  /* navegadores antigos não passam variáveis para o ::backdrop: fica a cor de reserva */
+  background: var(--backdrop, rgba(78, 64, 53, 0.45));
+}
+
+.finish-dialog__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 28px 24px;
+  text-align: center;
+}
+
+.finish-dialog__mascot {
+  width: 84px;
+}
+
+.finish-dialog h2 {
+  font-size: 1.5rem;
+}
+
+.finish-dialog__box > p {
+  line-height: 1.5;
+}
+
+.finish-dialog .reflection-field {
+  text-align: left;
+}
+
+.finish-dialog .reflection-field textarea {
+  background: var(--mint-light);
+}
+
+.finish-dialog__hint {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+
+.finish-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+@keyframes finish-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finish-dialog[open] {
+    animation: none;
+  }
+}

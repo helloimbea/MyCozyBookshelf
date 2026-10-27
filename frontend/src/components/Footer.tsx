@@ -11,7 +11,7 @@ export function Footer() {
           <img src={camaleao} alt="" className="footer__logo" />
           <span>my cozy bookshelf</span>
         </div>
-        <p className="footer__note">um cantinho pra guardar o que os livros deixaram em você.</p>
+        <p className="footer__note">temos algo a aprender com todos os livros.</p>
         <p className="footer__copy">© {YEAR}</p>
       </div>
     </footer>

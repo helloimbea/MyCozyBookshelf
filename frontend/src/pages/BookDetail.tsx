@@ -2,11 +2,19 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
 import { BookCover } from '../components/BookCover'
 import { BookForm } from '../components/BookForm'
+import { FinishReadingDialog } from '../components/FinishReadingDialog'
+import { ReflectionField } from '../components/ReflectionField'
 import { StarRating } from '../components/StarRating'
 import * as api from '../services/api'
 import type { Book, PinnedView } from '../types'
 import { formatDate } from '../utils/image'
+import { isReading, parsePage } from '../utils/reading'
 import './book.css'
+
+/** ["a", "b", "c"] -> "a, b e c" */
+function joinWithE(items: string[]) {
+  return items.length > 1 ? `${items.slice(0, -1).join(', ')} e ${items[items.length - 1]}` : items[0]
+}
 
 export function BookDetail() {
   const { id = '' } = useParams()
@@ -16,6 +24,8 @@ export function BookDetail() {
   const [pinned, setPinned] = useState<PinnedView | null>(null)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState('')
+  const [draftPage, setDraftPage] = useState('')
+  const [finishing, setFinishing] = useState(false)
   const [error, setError] = useState('')
 
   const refresh = useCallback(async () => {
@@ -48,8 +58,9 @@ export function BookDetail() {
   async function handleAddReflection(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     try {
-      await api.addReflection(book!.id, draft)
+      await api.addReflection(book!.id, { text: draft, page: parsePage(draftPage) })
       setDraft('')
+      setDraftPage('')
       setError('')
       await refresh()
     } catch (err) {
@@ -69,12 +80,28 @@ export function BookDetail() {
     await refresh()
   }
 
+  async function handleFinish(finalReflection: string) {
+    await api.finishReading(book!.id, { text: finalReflection })
+    setFinishing(false)
+    await refresh()
+  }
+
   async function handlePin(reflectionId: string) {
     await api.setPinned({ kind: 'reflection', bookId: book!.id, reflectionId })
     await refresh()
   }
 
+  const reading = isReading(book)
   const pinnedId = pinned?.pinned.kind === 'reflection' ? pinned.pinned.reflectionId : undefined
+  // só cita no convite os campos que ainda estão vazios
+  const missing = [
+    !book.author && 'autor',
+    !book.summary && 'resumo',
+    !book.genre && 'gênero',
+    !book.pages && 'páginas',
+    book.tags.length === 0 && 'tags',
+    !book.stars && 'estrelas',
+  ].filter(Boolean) as string[]
   const meta = [book.genre, book.pages && `${book.pages} páginas`].filter(Boolean) as string[]
 
   return (
@@ -111,6 +138,9 @@ export function BookDetail() {
             <div className="book-info__body">
               <h1>{book.title}</h1>
               {book.author && <p className="book-info__author">{book.author}</p>}
+              <span className={reading ? 'status-chip is-reading' : 'status-chip'}>
+                {reading ? 'lendo' : book.finishedAt ? `lido em ${formatDate(book.finishedAt)}` : 'lido'}
+              </span>
               {book.stars && <StarRating value={book.stars} />}
 
               {(meta.length > 0 || book.tags.length > 0) && (
@@ -128,17 +158,17 @@ export function BookDetail() {
                 </div>
               )}
 
-              {book.summary ? (
-                <p className="book-info__summary">{book.summary}</p>
-              ) : (
-                <p className="book-info__missing">
-                  dá pra completar autor, resumo, gênero, páginas, tags e estrelas quando quiser.
-                </p>
-              )}
+              {book.summary && <p className="book-info__summary">{book.summary}</p>}
+              {missing.length > 0 && <p className="book-info__missing">dá pra completar {joinWithE(missing)} quando quiser.</p>}
 
               <p className="book-info__date">na estante desde {formatDate(book.createdAt)}</p>
 
               <div className="book-info__actions">
+                {reading && (
+                  <button type="button" className="btn btn--primary btn--small" onClick={() => setFinishing(true)}>
+                    terminei a leitura
+                  </button>
+                )}
                 <button type="button" className="btn btn--soft btn--small" onClick={() => setEditing(true)}>
                   editar livro
                 </button>
@@ -152,22 +182,29 @@ export function BookDetail() {
       </div>
 
       <section className="reflections">
-        <h2>reflexões</h2>
+        <div>
+          <h2>reflexões</h2>
+          <p className="reflections__lead">
+            {reading ? 'não precisa terminar o livro pra refletir: vá anotando o que aprender pelo caminho.' : 'escreva aqui o que você aprendeu.'}
+          </p>
+        </div>
 
         <form className="reflection-new" onSubmit={handleAddReflection}>
-          <textarea className="input" value={draft} onChange={(e) => setDraft(e.target.value)} placeholder="o que esse livro deixou em você?" />
+          <ReflectionField value={draft} onChange={setDraft} genre={book.genre} page={draftPage} onPageChange={setDraftPage} />
           {error && <p className="form-error">{error}</p>}
           <button type="submit" className="btn btn--primary" disabled={!draft.trim()}>
             guardar reflexão
           </button>
         </form>
 
-        {book.reflections.length === 0 && <p className="reflections__empty">ainda não tem nenhuma reflexão aqui.</p>}
+        {book.reflections.length === 0 && <p className="reflections__empty">todo livro deixa alguma coisa. o que esse deixou em você?</p>}
 
         {[...book.reflections].reverse().map((r) => (
-          <article key={r.id} className="reflection">
+          <article key={r.id} className={r.final ? 'reflection reflection--final' : 'reflection'}>
             <header>
               <time dateTime={r.createdAt}>{formatDate(r.createdAt)}</time>
+              {r.page && <span className="chip">p. {r.page}</span>}
+              {r.final && <span className="chip">reflexão final</span>}
               {r.id === pinnedId && <span className="chip">fixada no início</span>}
             </header>
             <p>{r.text}</p>
@@ -184,6 +221,8 @@ export function BookDetail() {
           </article>
         ))}
       </section>
+
+      <FinishReadingDialog open={finishing} bookTitle={book.title} onConfirm={handleFinish} onClose={() => setFinishing(false)} />
     </section>
   )
 }

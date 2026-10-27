@@ -1,7 +1,11 @@
 ﻿import { useState, type ChangeEvent, type FormEvent } from 'react'
-import type { BookInput } from '../types'
+import type { BookInput, NewReflection, ReadingStatus } from '../types'
 import { fileToCoverDataUrl } from '../utils/image'
+import { parsePage } from '../utils/reading'
 import { BookCover } from './BookCover'
+import { ReflectionField } from './ReflectionField'
+import { TitleSearch } from './TitleSearch'
+import type { BookSuggestion } from '../services/bookSearch'
 import { StarRating } from './StarRating'
 import { TagInput } from './TagInput'
 import './BookForm.css'
@@ -10,24 +14,43 @@ type Props = {
   initial?: BookInput
   /** No cadastro o formulário também aceita a primeira reflexão. */
   withReflection?: boolean
+  /** No cadastro o título sugere livros (Google Books / Open Library) e preenche o resto. */
+  withSearch?: boolean
   submitLabel: string
-  onSubmit: (input: BookInput, reflection?: string) => Promise<void>
+  onSubmit: (input: BookInput, reflection?: NewReflection) => Promise<void>
   onCancel?: () => void
 }
 
-const EMPTY: BookInput = { title: '', tags: [] }
+const EMPTY: BookInput = { title: '', tags: [], status: 'read' }
 
-export function BookForm({ initial = EMPTY, withReflection = false, submitLabel, onSubmit, onCancel }: Props) {
+export function BookForm({ initial = EMPTY, withReflection = false, withSearch = false, submitLabel, onSubmit, onCancel }: Props) {
   const [values, setValues] = useState<BookInput>(initial)
   const [pagesText, setPagesText] = useState(initial.pages ? String(initial.pages) : '')
   const [reflection, setReflection] = useState('')
+  const [reflectionPage, setReflectionPage] = useState('')
   const [coverMode, setCoverMode] = useState<'upload' | 'link'>(initial.coverUrl?.startsWith('http') ? 'link' : 'upload')
   const [showMore, setShowMore] = useState(initial !== EMPTY)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
+  const status: ReadingStatus = values.status ?? 'read'
+
   function set<K extends keyof BookInput>(key: K, value: BookInput[K]) {
     setValues((v) => ({ ...v, [key]: value }))
+  }
+
+  /** Preenche o formulário com o livro escolhido na busca (só o que a busca trouxe). */
+  function fillFromSuggestion(book: BookSuggestion) {
+    setValues((v) => ({
+      ...v,
+      title: book.title,
+      author: book.author ?? v.author,
+      genre: book.genre ?? v.genre,
+      coverUrl: book.coverUrl ?? v.coverUrl,
+    }))
+    if (book.pages) setPagesText(String(book.pages))
+    if (book.coverUrl) setCoverMode('link')
+    setShowMore(true) // abre os detalhes para a pessoa ver o que foi preenchido
   }
 
   async function handleFile(e: ChangeEvent<HTMLInputElement>) {
@@ -55,7 +78,7 @@ export function BookForm({ initial = EMPTY, withReflection = false, submitLabel,
     setError('')
     setBusy(true)
     try {
-      await onSubmit({ ...values, pages }, withReflection ? reflection : undefined)
+      await onSubmit({ ...values, pages }, withReflection ? { text: reflection, page: parsePage(reflectionPage) } : undefined)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'algo deu errado, tente de novo.')
       setBusy(false)
@@ -101,17 +124,37 @@ export function BookForm({ initial = EMPTY, withReflection = false, submitLabel,
       </div>
 
       <div className="book-form__fields">
-        <label className="field">
-          <span className="field__label">título</span>
-          <input
-            className="input"
-            value={values.title}
-            onChange={(e) => set('title', e.target.value)}
-            placeholder="qual livro você leu?"
-            required
-            autoFocus={!initial.title}
-          />
-        </label>
+        {withSearch ? (
+          <div className="field">
+            <span className="field__label">título</span>
+            <TitleSearch value={values.title} onChange={(title) => set('title', title)} onPick={fillFromSuggestion} autoFocus={!initial.title} />
+            <span className="field__hint">comece a digitar que a gente procura o livro pra você.</span>
+          </div>
+        ) : (
+          <label className="field">
+            <span className="field__label">título</span>
+            <input
+              className="input"
+              value={values.title}
+              onChange={(e) => set('title', e.target.value)}
+              placeholder="qual livro você leu?"
+              required
+              autoFocus={!initial.title}
+            />
+          </label>
+        )}
+
+        <div className="field">
+          <span className="field__label">como está essa leitura?</span>
+          <div className="segmented book-form__status" role="radiogroup" aria-label="como está essa leitura?">
+            {(['reading', 'read'] as ReadingStatus[]).map((s) => (
+              <button key={s} type="button" role="radio" aria-checked={status === s} onClick={() => set('status', s)}>
+                {s === 'reading' ? 'lendo' : 'lido'}
+              </button>
+            ))}
+          </div>
+          {status === 'reading' && <span className="field__hint">não precisa terminar o livro pra refletir: vá anotando enquanto lê.</span>}
+        </div>
 
         <button type="button" className="book-form__toggle" aria-expanded={showMore} onClick={() => setShowMore((s) => !s)}>
           <span aria-hidden="true">{showMore ? '−' : '+'}</span>
@@ -145,10 +188,11 @@ export function BookForm({ initial = EMPTY, withReflection = false, submitLabel,
               <TagInput value={values.tags} onChange={(tags) => set('tags', tags)} />
             </div>
             {withReflection && (
-              <label className="field book-form__wide">
-                <span className="field__label">reflexão</span>
-                <textarea className="input" value={reflection} onChange={(e) => setReflection(e.target.value)} placeholder="o que esse livro deixou em você?" />
-              </label>
+              <div className="field book-form__wide">
+                <span className="field__label">{status === 'reading' ? 'reflexão até aqui' : 'reflexão'}</span>
+                <span className="field__hint">todo livro tem um aprendizado, até os de ficção.</span>
+                <ReflectionField value={reflection} onChange={setReflection} genre={values.genre} page={reflectionPage} onPageChange={setReflectionPage} />
+              </div>
             )}
           </div>
         )}
