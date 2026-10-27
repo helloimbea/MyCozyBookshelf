@@ -1,4 +1,4 @@
-﻿.header {
+.header {
   background: var(--mint);
   border-bottom: 6px solid var(--beige-border);
   position: sticky;
@@ -67,7 +67,7 @@
   gap: 10px;
 }
 
-/* botão de tema claro/escuro */
+/* light/dark theme button */
 .header__theme {
   display: grid;
   place-items: center;
@@ -90,7 +90,7 @@
   height: 22px;
 }
 
-/* botão de 3 risquinhos, fundo escuro e "x" só existem no celular */
+/* hamburger button, dark backdrop and "x" only exist on mobile */
 .header__burger,
 .header__close,
 .header__backdrop {
@@ -148,7 +148,7 @@
     pointer-events: auto;
   }
 
-  /* menu lateral */
+  /* side menu */
   .header__nav {
     position: fixed;
     top: 0;

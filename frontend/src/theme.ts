@@ -1,5 +1,5 @@
-// O tema inicial é aplicado por um script no index.html (antes do React carregar),
-// para a página não piscar clara antes de ficar escura.
+// The initial theme is applied by a script in index.html (before React loads),
+// so the page doesn't flash light before turning dark.
 export type Theme = 'light' | 'dark'
 
 const STORAGE_KEY = 'mcb:theme'
@@ -13,6 +13,6 @@ export function setTheme(theme: Theme) {
   try {
     localStorage.setItem(STORAGE_KEY, theme)
   } catch {
-    // sem armazenamento (ex.: navegação privada): o tema vale só até recarregar
+    // no storage (e.g. private mode): the theme lasts until the page reloads
   }
 }

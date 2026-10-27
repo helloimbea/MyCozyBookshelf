@@ -1,4 +1,4 @@
-﻿.back-link {
+.back-link {
   display: inline-block;
   margin-bottom: 18px;
   font-weight: 600;
@@ -50,7 +50,7 @@
   color: var(--on-accent);
 }
 
-/* bolinha que indica leitura em andamento */
+/* little dot showing the reading is in progress */
 .status-chip.is-reading::before {
   content: '';
   width: 8px;

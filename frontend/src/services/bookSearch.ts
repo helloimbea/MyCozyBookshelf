@@ -1,8 +1,10 @@
-﻿// Busca de livros para preencher o cadastro sozinho (título, autor, capa, páginas, gênero).
-// Tenta primeiro o Google Books (mais edições brasileiras) e, se ele falhar ou não achar nada,
-// usa o Open Library. Sem chave, o Google divide a cota por IP: em redes que saem todas pelo
-// mesmo IP (ex.: proxy de empresa) ela acaba rápido, e aí o Open Library segura a busca.
-// Para ter cota própria, defina VITE_GOOGLE_BOOKS_API_KEY no frontend/.env.local.
+// Book search to fill in the form automatically (title, author, cover, pages, genre).
+// Tries Google Books first (more Brazilian editions) and, if it fails or finds nothing,
+// falls back to Open Library. Without an API key Google splits its quota by IP: on networks
+// where everyone leaves through the same IP (e.g. a corporate proxy) it runs out quickly,
+// and Open Library keeps the search working. For a quota of your own, set
+// VITE_GOOGLE_BOOKS_API_KEY in frontend/.env.local.
+import type { GenreKey } from '../i18n/genres'
 
 export type BookSuggestion = {
   id: string
@@ -10,36 +12,37 @@ export type BookSuggestion = {
   author?: string
   year?: string
   pages?: number
-  genre?: string
+  /** the visible name comes from the current language (messages.genres) */
+  genre?: GenreKey
   coverUrl?: string
 }
 
 const MAX_RESULTS = 6
 
-// categorias das APIs (em inglês) -> gênero em português; as mais específicas vêm antes
-const GENRE_MAP: [RegExp, string][] = [
-  [/self-help|autoajuda/i, 'autoajuda'],
-  [/psycholog|psicolog/i, 'psicologia'],
-  [/philosoph|filosof/i, 'filosofia'],
-  [/fantasy|fantasia/i, 'fantasia'],
+// API categories (mostly in English) -> genre key; the more specific ones come first
+const GENRE_MAP: [RegExp, GenreKey][] = [
+  [/self-help|autoajuda|autoayuda/i, 'selfHelp'],
+  [/psycholog|psicolog/i, 'psychology'],
+  [/philosoph|filosof/i, 'philosophy'],
+  [/fantasy|fantasia|fantasía/i, 'fantasy'],
   [/romance/i, 'romance'],
-  [/juvenile fiction|young adult/i, 'ficção juvenil'],
-  [/science fiction|ficção científica/i, 'ficção científica'],
-  [/mystery|thriller|suspense/i, 'suspense'],
-  [/horror|terror/i, 'terror'],
-  [/poetry|poesia/i, 'poesia'],
-  [/comics|graphic novel/i, 'hq'],
-  [/biograph/i, 'biografia'],
-  [/business|economics|finance/i, 'negócios'],
-  [/history|história/i, 'história'],
-  [/religion|spiritual|body, mind/i, 'espiritualidade'],
-  [/health|saúde/i, 'saúde'],
-  [/science|ciência/i, 'ciência'],
-  [/fiction|ficção/i, 'ficção'],
+  [/juvenile fiction|young adult/i, 'youngAdult'],
+  [/science fiction|ficção científica|ciencia ficción/i, 'sciFi'],
+  [/mystery|thriller|suspense/i, 'thriller'],
+  [/horror|terror/i, 'horror'],
+  [/poetry|poesia|poesía/i, 'poetry'],
+  [/comics|graphic novel/i, 'comics'],
+  [/biograph/i, 'biography'],
+  [/business|economics|finance/i, 'business'],
+  [/history|história|historia/i, 'history'],
+  [/religion|spiritual|body, mind/i, 'spirituality'],
+  [/health|saúde|salud/i, 'health'],
+  [/science|ciência|ciencia/i, 'science'],
+  [/fiction|ficção|ficción/i, 'fiction'],
 ]
 
-/** As APIs listam as categorias da mais para a menos relevante: vale a primeira que for reconhecida. */
-function genreFrom(categories: string[] = []): string | undefined {
+/** APIs list categories from most to least relevant: the first recognized one wins. */
+function genreFrom(categories: string[] = []): GenreKey | undefined {
   for (const category of categories) {
     for (const [pattern, genre] of GENRE_MAP) if (pattern.test(category)) return genre
   }
@@ -77,7 +80,7 @@ async function searchGoogle(query: string, signal: AbortSignal): Promise<BookSug
         year: v.publishedDate?.slice(0, 4),
         pages: v.pageCount || undefined,
         genre: genreFrom(v.categories),
-        // as miniaturas vêm em http e com a "orelha" dobrada; https e sem o efeito
+        // thumbnails come over http and with a "curled page" effect; use https and drop the effect
         coverUrl: thumb?.replace(/^http:/, 'https:').replace('&edge=curl', ''),
       }
     })
@@ -111,12 +114,12 @@ async function searchOpenLibrary(query: string, signal: AbortSignal): Promise<Bo
       year: d.first_publish_year ? String(d.first_publish_year) : undefined,
       pages: d.number_of_pages_median || undefined,
       genre: genreFrom(d.subject),
-      // default=false: sem capa, responde 404 (e entra a capa placeholder) em vez de uma imagem vazia
+      // default=false: a missing cover answers 404 (and the placeholder shows) instead of a blank image
       coverUrl: d.cover_i ? `https://covers.openlibrary.org/b/id/${d.cover_i}-L.jpg?default=false` : undefined,
     }))
 }
 
-/** Procura livros pelo título (ou título + autor). Nunca lança erro: sem resultado, devolve []. */
+/** Searches books by title (or title + author). Never throws: no results means []. */
 export async function searchBooks(query: string, signal: AbortSignal): Promise<BookSuggestion[]> {
   try {
     const results = await searchGoogle(query, signal)

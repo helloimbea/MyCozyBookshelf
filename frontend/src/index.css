@@ -1,4 +1,4 @@
-﻿/* Paleta do projeto: ver "AI Guide/Plan/Plan.md" (seção Identidade visual) */
+/* Project palette: see "AI Guide/Plan/Plan.md" (Visual identity section) */
 :root {
   --mint: #8bf5d7;
   --sky: #6adce4;
@@ -19,7 +19,7 @@
   --white: #fffdf9;
   --danger: #c9675e;
   --star: #e9b949;
-  --ribbon: #e07a7a; /* fitinha de marcador (cor do vasinho) */
+  --ribbon: #e07a7a; /* bookmark ribbon (same color as the little pot) */
 
   --radius-sm: 14px;
   --radius: 20px;
@@ -27,14 +27,14 @@
   --radius-pill: 999px;
   --shadow-soft: 0 8px 24px rgba(117, 100, 86, 0.12);
 
-  /* papéis que mudam de cor entre os temas */
-  --on-accent: #3f6157; /* texto em cima do verde/menta */
+  /* roles whose color changes between themes */
+  --on-accent: #3f6157; /* text on top of green/mint */
   --placeholder: rgba(63, 97, 87, 0.65);
   --header-hover: rgba(255, 255, 255, 0.4);
   --header-active: rgba(255, 255, 255, 0.6);
   --ghost-hover: rgba(117, 100, 86, 0.08);
   --soft-hover: rgba(255, 255, 255, 0.5);
-  --backdrop: rgba(78, 64, 53, 0.45); /* fundo escurecido atrás de janelas */
+  --backdrop: rgba(78, 64, 53, 0.45); /* dimmed background behind dialogs */
 
   font-family: 'Quicksand', system-ui, sans-serif;
   font-size: 16px;
@@ -46,9 +46,9 @@
 }
 
 /*
-  Tema escuro: um cantinho de leitura à noite.
-  Fundos viram marrom-escuro quente; menta, verde e marrom continuam sendo a identidade.
-  O tema é escolhido no botão do header (ver src/theme.ts) e começa pelo do sistema.
+  Dark theme: a reading nook at night.
+  Backgrounds turn into a warm dark brown; mint, green and brown stay as the identity.
+  The theme is picked with the header button (see src/theme.ts) and starts from the system one.
 */
 :root[data-theme='dark'] {
   --mint: #1f463e;
@@ -63,7 +63,7 @@
   --brown: #9c8b6c;
   --brown-dark: #7a6c53;
   --brown-text: #ece2d3;
-  --brown-deep: #231e1b; /* texto do rodapé: escuro sobre o marrom lê melhor */
+  --brown-deep: #231e1b; /* footer text: dark on brown reads better */
   --beige: #231e1b;
   --beige-light: #352e29;
   --beige-border: #8a8358;
@@ -190,14 +190,14 @@ textarea {
   }
 }
 
-/* plantas decorativas */
+/* decorative plants */
 .plant {
   position: absolute;
   pointer-events: none;
   user-select: none;
 }
 
-/* vaso pendurado no canto esquerdo (posicionado em relação ao <main>) */
+/* hanging pot in the left corner (positioned relative to <main>) */
 .plant--hanging-left {
   top: 0;
   left: 16px;
@@ -216,7 +216,7 @@ textarea {
   }
 }
 
-/* ---------- botões ---------- */
+/* ---------- buttons ---------- */
 
 .btn {
   display: inline-flex;
@@ -291,7 +291,7 @@ textarea {
   border-radius: var(--radius-sm);
 }
 
-/* botão com cara de link (ex.: "ver demonstração") */
+/* button that looks like a link (e.g. "see the demo") */
 .link-button {
   border: 0;
   background: none;
@@ -308,7 +308,7 @@ textarea {
   text-decoration-color: var(--green-dark);
 }
 
-/* ---------- formulários ---------- */
+/* ---------- forms ---------- */
 
 .field {
   display: flex;
@@ -361,7 +361,7 @@ textarea.input {
   font-size: 0.95rem;
 }
 
-/* controle segmentado (abas pequenas) */
+/* segmented control (small tabs) */
 .segmented {
   display: flex;
   background: var(--mint-light);

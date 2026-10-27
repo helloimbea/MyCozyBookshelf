@@ -1,7 +1,7 @@
-﻿import { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useLocation, useNavigationType } from 'react-router'
 
-/** Página nova abre no topo; voltar/avançar no navegador mantém onde a pessoa estava. */
+/** A new page opens at the top; the browser's back/forward keeps where the person was. */
 export function ScrollToTop() {
   const { pathname } = useLocation()
   const navigationType = useNavigationType()

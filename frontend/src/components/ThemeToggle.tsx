@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useI18n } from '../i18n/context'
 import { getTheme, setTheme, type Theme } from '../theme'
 
 export function ThemeToggle() {
+  const { t } = useI18n()
   const [theme, setThemeState] = useState<Theme>(getTheme)
   const next: Theme = theme === 'dark' ? 'light' : 'dark'
-  const label = next === 'dark' ? 'ativar tema escuro' : 'ativar tema claro'
+  const label = next === 'dark' ? t.nav.toDark : t.nav.toLight
 
   return (
     <button
@@ -18,7 +20,7 @@ export function ThemeToggle() {
       }}
     >
       {theme === 'dark' ? (
-        // sol
+        // sun
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4.5" fill="currentColor" />
           <g stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -26,7 +28,7 @@ export function ThemeToggle() {
           </g>
         </svg>
       ) : (
-        // lua
+        // moon
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="currentColor" />
         </svg>

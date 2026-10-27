@@ -1,25 +1,27 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
+import { useI18n } from '../i18n/context'
 import { promptsFor } from '../utils/prompts'
 import './ReflectionField.css'
 
 type Props = {
   value: string
   onChange: (value: string) => void
-  /** gênero do livro, para escolher perguntas que combinem com ele */
+  /** the book's genre, to pick questions that match it */
   genre?: string
-  /** perguntas próprias (ex.: reflexão final); senão, vêm do gênero */
+  /** custom questions (e.g. final reflection); otherwise they come from the genre */
   prompts?: string[]
-  /** com onPageChange, aparece o campo opcional de página */
+  /** with onPageChange, the optional page field shows up */
   page?: string
   onPageChange?: (page: string) => void
   className?: string
   autoFocus?: boolean
 }
 
-/** Campo de reflexão com pergunta de inspiração, botão "me dá uma ideia" e página opcional. */
+/** Reflection field with an inspiring question, a "give me an idea" button and an optional page. */
 export function ReflectionField({ value, onChange, genre, prompts, page = '', onPageChange, className = 'input', autoFocus }: Props) {
-  const options = prompts ?? promptsFor(genre)
-  // a pergunta é sorteada uma vez; o botão troca por outra diferente
+  const { t } = useI18n()
+  const options = prompts ?? promptsFor(t, genre)
+  // the question is drawn once; the button swaps it for a different one
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1000))
   const prompt = options[seed % options.length]
 
@@ -30,11 +32,11 @@ export function ReflectionField({ value, onChange, genre, prompts, page = '', on
 
   return (
     <div className="reflection-field">
-      <textarea className={className} value={value} onChange={(e) => onChange(e.target.value)} placeholder={prompt} aria-label="reflexão" autoFocus={autoFocus} />
+      <textarea className={className} value={value} onChange={(e) => onChange(e.target.value)} placeholder={prompt} aria-label={t.reflectionField.label} autoFocus={autoFocus} />
       <div className="reflection-field__row">
         {onPageChange && (
-          <label className="reflection-field__page" title="a página onde você parou ou a que te fez pensar nisso">
-            <span>página</span>
+          <label className="reflection-field__page" title={t.reflectionField.pageTip}>
+            <span>{t.reflectionField.page}</span>
             <input
               className="input"
               type="number"
@@ -43,12 +45,12 @@ export function ReflectionField({ value, onChange, genre, prompts, page = '', on
               inputMode="numeric"
               value={page}
               onChange={(e) => onPageChange(e.target.value)}
-              placeholder="opcional"
+              placeholder={t.reflectionField.pagePlaceholder}
             />
           </label>
         )}
         <button type="button" className="reflection-field__idea" onClick={anotherIdea}>
-          <span aria-hidden="true">✿</span> me dá uma ideia
+          <span aria-hidden="true">✿</span> {t.reflectionField.idea}
         </button>
       </div>
     </div>

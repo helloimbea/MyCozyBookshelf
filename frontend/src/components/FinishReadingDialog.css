@@ -1,4 +1,4 @@
-﻿.finish-dialog {
+.finish-dialog {
   width: min(540px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
   padding: 0;
@@ -15,7 +15,7 @@
 }
 
 .finish-dialog::backdrop {
-  /* navegadores antigos não passam variáveis para o ::backdrop: fica a cor de reserva */
+  /* older browsers don't pass variables to ::backdrop: the fallback color is used */
   background: var(--backdrop, rgba(78, 64, 53, 0.45));
 }
 

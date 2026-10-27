@@ -11,8 +11,8 @@ frontend/dist/
 .DS_Store
 .env
 
-# Capas originais (pesadas) do modo demonstração; o site usa as versões
-# reduzidas em frontend/public/demo/
+# Original (heavy) demo covers; the site uses the smaller versions
+# in frontend/public/demo/
 AI Guide/Assets/amigos.png
 AI Guide/Assets/atomicos.png
 AI Guide/Assets/copo.png

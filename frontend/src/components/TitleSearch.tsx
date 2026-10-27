@@ -1,4 +1,5 @@
-﻿import { useEffect, useId, useState, type KeyboardEvent } from 'react'
+import { useEffect, useId, useState, type KeyboardEvent } from 'react'
+import { useI18n } from '../i18n/context'
 import { searchBooks, type BookSuggestion } from '../services/bookSearch'
 import { BookCover } from './BookCover'
 import './TitleSearch.css'
@@ -9,17 +10,18 @@ const DEBOUNCE_MS = 450
 type Props = {
   value: string
   onChange: (title: string) => void
-  /** a pessoa escolheu uma sugestão: o formulário preenche os outros campos */
+  /** the person picked a suggestion: the form fills in the other fields */
   onPick: (book: BookSuggestion) => void
   autoFocus?: boolean
 }
 
-/** Campo de título que sugere livros enquanto a pessoa digita. */
+/** Title field that suggests books while the person types. */
 export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
+  const { t } = useI18n()
   const listId = useId()
-  const [typed, setTyped] = useState(false) // só busca depois que a pessoa digita
+  const [typed, setTyped] = useState(false) // only searches after the person types
   const [open, setOpen] = useState(false)
-  // resultados guardam a busca a que pertencem: se o texto mudou, ainda está "procurando…"
+  // results remember which query they belong to: if the text changed, it's still "searching…"
   const [found, setFound] = useState<{ query: string; books: BookSuggestion[] }>({ query: '', books: [] })
   const [active, setActive] = useState(-1)
   const query = value.trim()
@@ -37,7 +39,7 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
           setActive(-1)
         })
         .catch(() => {
-          // busca cancelada porque a pessoa continuou digitando
+          // search cancelled because the person kept typing
         })
     }, DEBOUNCE_MS)
     return () => {
@@ -54,7 +56,7 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Escape') {
-      setOpen(false) // fecha a qualquer momento, até enquanto ainda está procurando
+      setOpen(false) // closes at any moment, even while still searching
       return
     }
     if (!open || !results.length) return
@@ -85,7 +87,7 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
         onKeyDown={handleKeyDown}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
-        placeholder="qual livro você leu?"
+        placeholder={t.form.titlePlaceholder}
         required
         autoFocus={autoFocus}
         autoComplete="off"
@@ -98,8 +100,8 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
 
       {showList && (
         <div className="title-search__panel">
-          <p className="title-search__hint">{loading ? 'procurando…' : 'é algum desses?'}</p>
-          <ul id={listId} role="listbox" className="title-search__list" aria-label="livros encontrados">
+          <p className="title-search__hint">{loading ? t.search.searching : t.search.suggestions}</p>
+          <ul id={listId} role="listbox" className="title-search__list" aria-label={t.search.listLabel}>
             {results.map((book, i) => (
               <li
                 key={book.id}
@@ -107,7 +109,7 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
                 role="option"
                 aria-selected={i === active}
                 className={i === active ? 'title-search__option is-active' : 'title-search__option'}
-                // mousedown em vez de click: acontece antes do blur que fecha a lista
+                // mousedown instead of click: it happens before the blur that closes the list
                 onMouseDown={(e) => {
                   e.preventDefault()
                   pick(book)
@@ -122,7 +124,7 @@ export function TitleSearch({ value, onChange, onPick, autoFocus }: Props) {
               </li>
             ))}
           </ul>
-          {!loading && <p className="title-search__hint">não achou? é só seguir digitando e preencher o resto com calma.</p>}
+          {!loading && <p className="title-search__hint">{t.search.notFound}</p>}
         </div>
       )}
     </div>

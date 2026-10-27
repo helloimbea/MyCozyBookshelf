@@ -1,4 +1,5 @@
 import { useState, type KeyboardEvent } from 'react'
+import { useI18n } from '../i18n/context'
 
 type Props = {
   value: string[]
@@ -6,6 +7,7 @@ type Props = {
 }
 
 export function TagInput({ value, onChange }: Props) {
+  const { t } = useI18n()
   const [draft, setDraft] = useState('')
 
   function commit() {
@@ -28,7 +30,7 @@ export function TagInput({ value, onChange }: Props) {
       {value.map((tag) => (
         <span key={tag} className="chip">
           {tag}
-          <button type="button" className="chip__remove" aria-label={`remover ${tag}`} onClick={() => onChange(value.filter((t) => t !== tag))}>
+          <button type="button" className="chip__remove" aria-label={t.form.removeTag(tag)} onClick={() => onChange(value.filter((x) => x !== tag))}>
             ×
           </button>
         </span>
@@ -39,7 +41,8 @@ export function TagInput({ value, onChange }: Props) {
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={commit}
-        placeholder={value.length ? '' : 'escreva e aperte enter'}
+        placeholder={value.length ? '' : t.form.tagsPlaceholder}
+        aria-label={t.form.tags}
       />
     </div>
   )

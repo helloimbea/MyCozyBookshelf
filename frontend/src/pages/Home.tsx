@@ -1,27 +1,29 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import camaleao from '../assets/camaleao.png'
-import plantar from '../assets/plantar.png'
-import plantar2 from '../assets/plantar2.png'
+import chameleon from '../assets/chameleon.png'
+import hangingPlant from '../assets/hanging-plant.png'
+import pottedPlant from '../assets/potted-plant.png'
 import { useAuth } from '../auth/context'
 import { BookCover } from '../components/BookCover'
 import { DemoButton } from '../components/DemoButton'
 import { ReflectionCarousel } from '../components/ReflectionCarousel'
+import { useI18n } from '../i18n/context'
 import * as api from '../services/api'
 import type { Book, PinnedReflection, PinnedView } from '../types'
 import './home.css'
 
 export function Home() {
   const { user } = useAuth()
+  const { t } = useI18n()
 
   return (
     <section className="home">
-      <img src={plantar} alt="" className="plant plant--hanging-left" />
+      <img src={hangingPlant} alt="" className="plant plant--hanging-left" />
       {user ? (
         <>
           <div className="home__greeting">
-            <h1>oi, {user.name}!</h1>
-            <p>que bom te ver por aqui.</p>
+            <h1>{t.home.hi(user.name)}</h1>
+            <p>{t.home.glad}</p>
           </div>
           <PinnedCard />
         </>
@@ -33,32 +35,35 @@ export function Home() {
 }
 
 function Welcome() {
+  const { t } = useI18n()
+
   return (
     <div className="home-card home-card--welcome">
-      <img src={plantar2} alt="" className="plant home-card__pot" />
+      <img src={pottedPlant} alt="" className="plant home-card__pot" />
       <figure className="home-mascot">
-        <img src={camaleao} alt="" className="home-card__mascot" />
-        <figcaption>o camaleão pega um pouquinho da cor de cada livro que lê.</figcaption>
+        <img src={chameleon} alt="" className="home-card__mascot" />
+        <figcaption>{t.home.mascotCaption}</figcaption>
       </figure>
-      <h1>todo livro tem um aprendizado</h1>
-      <p>um cantinho pra guardar os livros que você leu e tudo o que eles deixaram em você.</p>
+      <h1>{t.home.motto}</h1>
+      <p>{t.home.welcome}</p>
       <div className="home-card__actions">
-        <Link to="/cadastro" className="btn btn--primary">
-          criar minha estante
+        <Link to="/signup" className="btn btn--primary">
+          {t.home.createShelf}
         </Link>
         <Link to="/login" className="btn btn--soft">
-          já tenho conta
+          {t.home.haveAccount}
         </Link>
       </div>
       <p className="home-card__demo">
-        só quer dar uma olhadinha? <DemoButton className="link-button" />
+        {t.demo.justLooking} <DemoButton className="link-button" />
       </p>
     </div>
   )
 }
 
 function PinnedCard() {
-  // undefined = carregando, null = nada fixado
+  const { t } = useI18n()
+  // undefined = loading, null = nothing pinned
   const [pinned, setPinnedView] = useState<PinnedView | null>()
   const [books, setBooks] = useState<Book[]>([])
   const [editing, setEditing] = useState(false)
@@ -81,7 +86,7 @@ function PinnedCard() {
 
   if (pinned === undefined) return <div className="home-card" />
 
-  // lembranças: todas as reflexões menos a fixada, das mais novas para as mais antigas
+  // memories: every reflection except the pinned one, newest first
   const pinnedId = pinned?.pinned.kind === 'reflection' ? pinned.pinned.reflectionId : undefined
   const memories = books
     .flatMap((book) => book.reflections.map((reflection) => ({ book, reflection })))
@@ -91,17 +96,17 @@ function PinnedCard() {
   return (
     <>
       <div className="home-card">
-        <img src={plantar2} alt="" className="plant home-card__pot" />
+        <img src={pottedPlant} alt="" className="plant home-card__pot" />
 
         {editing ? (
           <PinEditor books={books} current={pinned?.pinned} onSave={save} onCancel={() => setEditing(false)} />
         ) : pinned ? (
           <figure className="pinned">
-            <span className="chip">reflexão fixada</span>
+            <span className="chip">{t.home.pinnedLabel}</span>
             <blockquote className="pinned__text">{pinned.text}</blockquote>
             <figcaption className="pinned__source">
               {pinned.book ? (
-                <Link to={`/livro/${pinned.book.id}`} className="pinned__book">
+                <Link to={`/book/${pinned.book.id}`} className="pinned__book">
                   <BookCover title={pinned.book.title} author={pinned.book.author} coverUrl={pinned.book.coverUrl} className="pinned__cover" />
                   <span>
                     <strong>{pinned.book.title}</strong>
@@ -109,25 +114,25 @@ function PinnedCard() {
                   </span>
                 </Link>
               ) : (
-                <span className="pinned__own">escrita por você</span>
+                <span className="pinned__own">{t.home.writtenByYou}</span>
               )}
             </figcaption>
             <div className="home-card__actions">
               <button type="button" className="btn btn--soft btn--small" onClick={() => setEditing(true)}>
-                trocar reflexão
+                {t.home.change}
               </button>
               <button type="button" className="btn btn--ghost btn--small" onClick={() => save(null)}>
-                desafixar
+                {t.home.unpin}
               </button>
             </div>
           </figure>
         ) : (
           <div className="home-empty">
-            <img src={camaleao} alt="" className="home-card__mascot" />
-            <h2>fixe aqui uma reflexão que te acompanha</h2>
-            <p>escolha uma das suas reflexões ou escreva uma nova, só pra este cantinho.</p>
+            <img src={chameleon} alt="" className="home-card__mascot" />
+            <h2>{t.home.emptyTitle}</h2>
+            <p>{t.home.emptyText}</p>
             <button type="button" className="btn btn--primary" onClick={() => setEditing(true)}>
-              escolher reflexão
+              {t.home.choose}
             </button>
           </div>
         )}
@@ -145,6 +150,7 @@ type EditorProps = {
 }
 
 function PinEditor({ books, current, onSave, onCancel }: EditorProps) {
+  const { t } = useI18n()
   const options = books
     .flatMap((book) => book.reflections.map((reflection) => ({ book, reflection })))
     .sort((a, b) => b.reflection.createdAt.localeCompare(a.reflection.createdAt))
@@ -156,23 +162,23 @@ function PinEditor({ books, current, onSave, onCancel }: EditorProps) {
   function handleSave() {
     if (mode === 'pick') {
       const option = options.find((o) => o.reflection.id === selected)
-      if (!option) return setError('escolha uma das reflexões.')
+      if (!option) return setError(t.home.pickError)
       return onSave({ kind: 'reflection', bookId: option.book.id, reflectionId: option.reflection.id })
     }
-    if (!text.trim()) return setError('escreva alguma coisa antes de fixar.')
+    if (!text.trim()) return setError(t.home.writeError)
     return onSave({ kind: 'custom', text: text.trim() })
   }
 
   return (
     <div className="pin-editor">
-      <h2>o que você quer ver ao chegar aqui?</h2>
+      <h2>{t.home.editorTitle}</h2>
 
       <div className="segmented pin-editor__tabs" role="tablist">
         <button type="button" role="tab" aria-selected={mode === 'pick'} onClick={() => setMode('pick')}>
-          escolher das minhas
+          {t.home.pickTab}
         </button>
         <button type="button" role="tab" aria-selected={mode === 'write'} onClick={() => setMode('write')}>
-          escrever uma nova
+          {t.home.writeTab}
         </button>
       </div>
 
@@ -195,21 +201,21 @@ function PinEditor({ books, current, onSave, onCancel }: EditorProps) {
           </div>
         ) : (
           <p className="pin-editor__empty">
-            você ainda não escreveu reflexões nos seus livros. <Link to="/estante">ir para a estante</Link>
+            {t.home.noReflections} <Link to="/shelf">{t.home.goToShelf}</Link>
           </p>
         )
       ) : (
-        <textarea className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="uma frase, um pensamento, um lembrete pra você mesmo..." autoFocus />
+        <textarea className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder={t.home.customPlaceholder} autoFocus />
       )}
 
       {error && <p className="form-error">{error}</p>}
 
       <div className="home-card__actions">
         <button type="button" className="btn btn--ghost" onClick={onCancel}>
-          cancelar
+          {t.common.cancel}
         </button>
         <button type="button" className="btn btn--primary" onClick={handleSave}>
-          fixar no início
+          {t.home.pin}
         </button>
       </div>
     </div>
